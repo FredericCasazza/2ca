@@ -2,12 +2,17 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="2CA Restauration Website">
+        <meta name="keywords" content="2CA Restauration,restauration collective,restaurant d'entreprise">
+        <meta name="author" content="Frédéric Casazza">
+        <title>{% block title %}2CA Restauration{% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="{{asset('build/images/favicon.ico')}}" />
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
     </head>
-    <body>
+    <body class="sidebar-mini">
     {% block body %}{% endblock %}
     {% block javascripts %}
         {{ encore_entry_script_tags('app') }}

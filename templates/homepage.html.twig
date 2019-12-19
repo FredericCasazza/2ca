@@ -1,0 +1,61 @@
+{% extends 'layout.html.twig' %}
+
+{% block main %}
+    <section class="section section-top">
+        <div class="container">
+            <h1>
+                L'entreprise de <span class="text-primary">restauration collective</span> en région <span class="text-primary">PACA</span> qu'il vous faut.
+            </h1>
+            <div class="mt-3">
+                <a href="{{ path('app_login') }}" class="btn btn-primary">Connectez-vous</a>
+            </div>
+        </div>
+        <a href="#section-partners" class="down-arrow">
+            <i class="fa fa-chevron-circle-down fa-3x text-primary"></i>
+        </a>
+    </section>
+    <section class="section section-partners" id="section-partners">
+        <div class="container">
+            <h2>Ils nous font déjà confiance</h2>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="partner circle">
+                        <img class="logo" src="{{asset('build/images/pompier-logo.png')}}">
+                        <span>Caserne de pompiers de Magnan</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="section section-features" id="section-features">
+        <div class="container">
+            <h2>Que souhaitez-vous faire ?</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="#">
+                        <div class="feature feature-reservation">
+                            <h3>Réservez vos repas</h3>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="section section-contact">
+        <div class="container">
+            <h2>Contactez-nous</h2>
+            <p class="pb-4">
+                Vous souhaitez plus d'informations nous concernant ou vous avez des questions ?
+            </p>
+            <div class="contact d-flex justify-content-start">
+                <i class="fa fa-paper-plane fa-2x text-primary mr-3"></i>
+                <h4>contact@c2a-restauration.com</h4>
+            </div>
+            <div class="contact d-flex justify-content-start">
+                <i class="fa fa-mobile fa-3x text-primary ml-1 mr-3"></i>
+                <h4>+33 6 00 00 00 00</h4>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

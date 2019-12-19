@@ -12,4 +12,5 @@ import '../css/app.scss';
 import $ from 'jquery';
 
 import 'bootstrap';
-import 'admin-lte';
+import 'admin-lte/dist/js/adminlte.min';
+import '@fortawesome/fontawesome-free/js/all.min';

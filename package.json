@@ -18,8 +18,8 @@
         "build": "encore production --progress"
     },
     "dependencies": {
+        "@fortawesome/fontawesome-free": "^5.12.0",
         "admin-lte": "^3.0.1",
-        "font-awesome": "^4.7.0",
         "jquery": "^3.4.1"
     }
 }

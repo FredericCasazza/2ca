@@ -22,7 +22,7 @@ class DefaultController extends AbstractController
     public function number()
     {
 
-        return $this->render('default/homepage.html.twig', [
+        return $this->render('homepage.html.twig', [
         ]);
     }
 
