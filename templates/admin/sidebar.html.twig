@@ -1,9 +1,9 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="#" class="brand-link">
-                    <span class="brand-text font-weight-light">
-                        <span class="text-primary">2</span>CA Administration
-                    </span>
+        <span class="brand-text font-weight-light">
+            <span class="text-primary">2</span>CA Administration
+        </span>
     </a>
 
     <!-- Sidebar -->
@@ -23,8 +23,8 @@
                         <p>Commandes</p>
                     </a>
                 </li>
-                <li class="nav-item has-treeview menu-open">
-                    <a href="#" class="nav-link active">
+                <li class="nav-item has-treeview {% if 'catalog' in menusActive %} menu-open {% endif %}">
+                    <a href="#" class="nav-link {% if 'catalog' in menusActive %} active {% endif %}">
                         <i class="fas fa-book"></i>
                         <p>
                             Catalogue
@@ -33,7 +33,7 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="#" class="nav-link {% if 'meals' in menusActive %} active {% endif %}">
                                 <i class="fas fa-clipboard-list nav-icon"></i>
                                 <p>Menus</p>
                             </a>
@@ -47,7 +47,7 @@
                         <li class="nav-item">
                             <a href="./index3.html" class="nav-link">
                                 <i class="fas fa-map-marked-alt nav-icon"></i>
-                                <p>Localisations</p>
+                                <p>Etablissements</p>
                             </a>
                         </li>
                     </ul>

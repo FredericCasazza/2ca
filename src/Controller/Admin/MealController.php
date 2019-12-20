@@ -17,7 +17,7 @@ class MealController extends AbstractController
      */
     public function meals()
     {
-        return $this->render('admin/layout.html.twig');
+        return $this->render('admin/meal/list.html.twig');
     }
 
 }

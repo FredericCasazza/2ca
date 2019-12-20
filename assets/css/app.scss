@@ -113,12 +113,27 @@ html, body {
   background: white;
   justify-content: center;
   align-items: center;
-  padding: 60px;
-  border-radius: 10px;
+  display: flex;
+}
+
+@media (max-width: 576px) {
+  .section-login > div {
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+    border-radius:0;
+  }
+}
+
+@media (min-width: 576px) {
+  .section-login > div {
+    padding: 60px;
+    border-radius: 10px;
+  }
 }
 
 .section-login form {
-  display: inline-table;
+  width: 100%;
 }
 
 /*
