@@ -1,9 +1,12 @@
-{% extends 'base.html.twig' %}
+{% extends 'site/layout.html.twig' %}
 
-{% block body %}
+{% block main %}
     <section class="section-login">
         <div>
-        {{ form(form) }}
+            {{ form_start(form) }}
+                <h3 class="mb-4">Créer un compte</h3>
+                {{ form(form) }}
+            {{ form_end(form) }}
         </div>
     </section>
 {% endblock %}

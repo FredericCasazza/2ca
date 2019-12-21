@@ -9,8 +9,10 @@
 import '../css/app.scss';
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to require it.
-import $ from 'jquery';
+const $ = require('jquery');
+global.$ = global.jQuery = $;
 
 import 'bootstrap';
+import 'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min';
 import 'admin-lte/dist/js/adminlte.min';
 import '@fortawesome/fontawesome-free/js/all.min';

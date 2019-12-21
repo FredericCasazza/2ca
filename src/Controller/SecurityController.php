@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegisterType;
+use App\Manager\UserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,9 +42,10 @@ class SecurityController extends AbstractController
     /**
      * @Route("/registration", name="app_registration")
      * @param Request $request
+     * @param UserManager $userManager
      * @return Response
      */
-    public function registration(Request $request)
+    public function registration(Request $request, UserManager $userManager)
     {
         $user = new User();
         $form = $this->createForm(RegisterType::class, $user);
@@ -51,7 +53,10 @@ class SecurityController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid())
         {
+            $user = $form->getData();
+            $userManager->create($user);
 
+            return $this->render('security/registration_success.html.twig');
         }
 
         return $this->render('security/registration.html.twig', [

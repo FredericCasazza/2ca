@@ -1,0 +1,25 @@
+{{ form_start(form) }}
+    {{ form_row(form.date) }}
+    {{ form_row(form.period) }}
+    <div class="card">
+        <div class="card-body">
+            <h6><u>Sélectionnez les établissements concernés</u></h6>
+            {{ form_widget(form.establishments) }}
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary" id="create_button">Enregistrer</button>
+{{ form_end(form) }}
+<script>
+    $('form[name="meal"]').submit(function(e){
+        e.preventDefault();
+        let url = '{{ path('admin_catalog_meal_edit', {'id': form.vars.data.id}) }}';
+        let data = $(this).serialize();
+        $.post(
+            url,
+            data
+        ).done(function(data){
+            $('#modal_app').modal('hide');
+            document.location.reload();
+        });
+    });
+</script>

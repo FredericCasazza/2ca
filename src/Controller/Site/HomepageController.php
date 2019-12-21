@@ -1,17 +1,17 @@
 <?php
 
 
-namespace App\Controller;
+namespace App\Controller\Site;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Class DefaultController
- * @package App\Controller
+ * Class HomepageController
+ * @package App\Controller\Site
  */
-class DefaultController extends AbstractController
+class HomepageController extends AbstractController
 {
 
     /**
@@ -22,7 +22,7 @@ class DefaultController extends AbstractController
     public function number()
     {
 
-        return $this->render('homepage.html.twig', [
+        return $this->render('site/homepage.html.twig', [
         ]);
     }
 

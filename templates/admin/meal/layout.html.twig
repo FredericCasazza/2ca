@@ -1,0 +1,6 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block sidebar %}
+    {% set menusActive = {0: 'catalog', 1: 'meals'} %}
+    {{ parent() }}
+{% endblock %}
