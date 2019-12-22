@@ -6,6 +6,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Dish;
 use App\Entity\Meal;
+use App\Form\DishRemoveType;
 use App\Form\DishType;
 use App\Form\MealType;
 use App\Manager\DishCategoryManager;
@@ -16,6 +17,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Class MealController
+ * @package App\Controller\Admin
+ */
 class MealController extends AbstractController
 {
 
@@ -49,6 +54,9 @@ class MealController extends AbstractController
         {
             $meal = $form->getData();
             $mealManager->create($meal);
+
+            return $this->json(true);
+
         }
 
         return $this->render('admin/meal/create.html.twig', [
@@ -109,6 +117,8 @@ class MealController extends AbstractController
         {
             $meal = $form->getData();
             $mealManager->update($meal);
+
+            return $this->json(true);
         }
 
         return $this->render('admin/meal/edit.html.twig', [
@@ -144,13 +154,49 @@ class MealController extends AbstractController
         {
             /** @var Dish $dish */
             $dish = $form->getData();
-
             $dishManager->create($dish);
+
+            return $this->json(true);
         }
 
         return $this->render('admin/meal/add_dish.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/admin/dish/{id}/remove", name="admin_dish_remove")
+     * @param $id
+     * @param Request $request
+     * @param DishManager $dishManager
+     * @return Response
+     * @throws \Exception
+     */
+    public function removeDish($id, Request $request, DishManager $dishManager)
+    {
+        $dish = $dishManager->find($id);
+
+        if(!$dish instanceof Dish)
+        {
+            throw new \Exception("Le plat {$id} n'existe pas");
+        }
+
+        $form = $this->createForm(DishRemoveType::class, $dish);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            /** @var Dish $dish */
+            $dish = $form->getData();
+            $dishManager->remove($dish);
+
+            return $this->json(true);
+        }
+
+        return $this->render('admin/meal/remove_dish.html.twig', [
+            'form' => $form->createView()
+        ]);
+
     }
 
 }

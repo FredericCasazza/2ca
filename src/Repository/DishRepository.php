@@ -35,4 +35,14 @@ class DishRepository extends ServiceEntityRepository
         $this->_em->persist($dish);
         $this->_em->flush();
     }
+
+    /**
+     * @param Dish $dish
+     * @throws ORMException
+     */
+    public function remove(Dish $dish)
+    {
+        $this->_em->remove($dish);
+        $this->_em->flush();
+    }
 }

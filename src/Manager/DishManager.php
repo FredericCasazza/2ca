@@ -7,6 +7,7 @@ use App\Entity\Dish;
 use App\Entity\DishCategory;
 use App\Entity\Meal;
 use App\Event\Dish\CreateDishEvent;
+use App\Event\Dish\RemoveDishEvent;
 use App\Repository\DishRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -68,6 +69,15 @@ class DishManager extends AbstractManager
     public function create(Dish $dish)
     {
         $event = new CreateDishEvent($dish);
+        $this->eventDispatcher->dispatch($event);
+    }
+
+    /**
+     * @param Dish $dish
+     */
+    public function remove(Dish $dish)
+    {
+        $event = new RemoveDishEvent($dish);
         $this->eventDispatcher->dispatch($event);
     }
 

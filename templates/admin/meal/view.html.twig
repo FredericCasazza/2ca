@@ -10,8 +10,18 @@
             </div>
             <div class="col-md-6">
                 <div class="d-flex justify-content-end">
-                    <button type="button" id="add_dish" class="btn btn-primary mr-2">Ajouter un plat</button>
-                    <button type="button" id="edit_meal" class="btn btn-outline-primary">Modifier</button>
+                    <button type="button" id="add_dish" class="modal-action btn btn-primary mr-2"
+                            data-action-title="Ajouter un plat"
+                            data-action-url="{{ path('admin_catalog_meal_add_dish', {'id': meal.id}) }}"
+                    >
+                        Ajouter un plat
+                    </button>
+                    <button type="button" id="edit_meal" class="modal-action btn btn-outline-primary"
+                            data-action-title="Modifier le menu"
+                            data-action-url="{{ path('admin_catalog_meal_edit', {'id': meal.id}) }}"
+                    >
+                        Modifier
+                    </button>
                 </div>
             </div>
         </div>
@@ -35,18 +45,21 @@
 
                                 {% for category, dishes in dishesByCategories %}
                                     {% if dishes is not empty %}
+                                        {% if loop.first == false %}
+                                            <span class="separator my-3">~</span>
+                                        {% endif %}
                                         <h4>{{ category }}</h4>
                                         {% for dish in dishes %}
                                             <span>
                                                 {{ dish.label }}
-                                                <a href="#" class="btn-link">
+                                                <a href="#" class=" modal-action"
+                                                   data-action-title="Supprimer un plat"
+                                                   data-action-url="{{ path('admin_dish_remove', {'id': dish.id}) }}"
+                                                >
                                                     <i class="far fa-trash-alt text-danger"></i>
                                                 </a>
                                             </span>
                                         {% endfor %}
-                                        {% if loop.last == false %}
-                                            <span class="separator my-3">~</span>
-                                        {% endif %}
                                     {% endif %}
                                 {% endfor %}
                             </div>
@@ -64,23 +77,13 @@
     {{ parent() }}
     <script>
         $(document).ready(function(){
-            $('#edit_meal').click(function(){
-                let url = '{{ path('admin_catalog_meal_edit', {'id': meal.id})|escape('js') }}';
+                        $('.modal-action').click(function(){
+                let title = $(this).data('action-title');
+                let url = $(this).data('action-url');
                 $.get(
                     url
                 ).done(function(data){
-                    $('#modal_app_title').html('Editer le menu');
-                    $('#modal_app_body').html(data);
-                    $('#modal_app').modal('show');
-                });
-            });
-
-            $('#add_dish').click(function(){
-                let url = '{{ path('admin_catalog_meal_add_dish', {'id': meal.id})|escape('js') }}';
-                $.get(
-                    url
-                ).done(function(data){
-                    $('#modal_app_title').html('Ajouter un plat');
+                    $('#modal_app_title').html(title);
                     $('#modal_app_body').html(data);
                     $('#modal_app').modal('show');
                 });
