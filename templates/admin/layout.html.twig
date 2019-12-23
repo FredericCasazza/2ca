@@ -13,3 +13,41 @@
         </div>
     </div>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+            $('.modal-action').click(function(){
+                let title = $(this).data('action-title');
+                let url = $(this).data('action-url');
+                $.get(
+                    url
+                ).done(function(data){
+                    $('#modal_app_title').html(title);
+                    $('#modal_app_body').html(data);
+                    $('#modal_app').modal('show');
+                });
+            });
+
+            $(document).on('submit', '.modal-action-form', function(e){
+                e.preventDefault();
+                let url = $(this).data('action-url')
+                let data = $(this).serialize();
+                $.post(
+                    url,
+                    data
+                ).done(function(data){
+                    if(data === true)
+                    {
+                        $('#modal_app').modal('hide');
+                        document.location.reload();
+                    }else{
+                        $('#modal_app_body').html(data);
+                    }
+                });
+            });
+        });
+
+    </script>
+{% endblock %}

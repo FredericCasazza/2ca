@@ -1,0 +1,16 @@
+
+{% if helper.get('configuration').getParameter('recaptchaEnable') %}
+    <script src="https://www.google.com/recaptcha/api.js?render={{ recaptcha_site_key }}"></script>
+    <script>
+        $(document).ready(function () {
+            if ($('.recaptcha-token').length) {
+                let action = $(this).data('action');
+                grecaptcha.ready(function() {
+                    grecaptcha.execute('{{ recaptcha_site_key }}', {action: action}).then(function(token) {
+                        $('.recaptcha-token').val(token);
+                    });
+                });
+            }
+        });
+    </script>
+{% endif %}

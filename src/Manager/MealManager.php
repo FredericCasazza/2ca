@@ -5,6 +5,7 @@ namespace App\Manager;
 
 use App\Entity\Meal;
 use App\Event\Meal\CreateMealEvent;
+use App\Event\Meal\PublishMealEvent;
 use App\Event\Meal\UpdateMealEvent;
 use App\Repository\MealRepository;
 use Knp\Component\Pager\Pagination\PaginationInterface;
@@ -52,6 +53,26 @@ class MealManager extends AbstractManager
     public function paginate($page, $limit)
     {
         return $this->mealRepository->paginate($page, $limit);
+    }
+
+    /**
+     * @param Meal $meal
+     */
+    public function publish(Meal $meal)
+    {
+        $meal->setPublished(true);
+        $event = new PublishMealEvent($meal);
+        $this->eventDispatcher->dispatch($event);
+    }
+
+    /**
+     * @param Meal $meal
+     */
+    public function unpublish(Meal $meal)
+    {
+        $meal->setPublished(false);
+        $event = new PublishMealEvent($meal);
+        $this->eventDispatcher->dispatch($event);
     }
 
     /**

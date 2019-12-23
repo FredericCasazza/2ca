@@ -1,0 +1,11 @@
+{{ form_start(form, {'attr': {'class': 'modal-action-form', 'data-action-url': path('admin_meal_edit', {'id': form.vars.data.id}) }}) }}
+    {{ form_row(form.date) }}
+    {{ form_row(form.period) }}
+    <div class="card">
+        <div class="card-body">
+            <h6><u>Sélectionnez les établissements concernés</u></h6>
+            {{ form_widget(form.establishments) }}
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary" id="create_button">Enregistrer</button>
+{{ form_end(form) }}

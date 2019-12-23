@@ -1,8 +1,16 @@
-{% for label, messages in app.flashes() %}
-    {% for message in messages %}
-        <div class="alert alert-{{ label }} alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            {{ message }}
-        </div>
+<script>
+    {% for label, messages in app.flashes() %}
+        {% for message in messages %}
+            let autohide = false;
+            {% if label in ['success', 'info'] %}
+                autohide = true;
+            {% endif %}
+            $(document).Toasts('create', {
+                class: 'bg-{{ label }} flash',
+                autohide: autohide,
+                delay: 3000,
+                body: '{{ message }}'
+            });
+        {% endfor %}
     {% endfor %}
-{% endfor %}
+</script>

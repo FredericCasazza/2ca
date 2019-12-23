@@ -14,5 +14,5 @@ global.$ = global.jQuery = $;
 
 import 'bootstrap';
 import 'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min';
-import 'admin-lte/dist/js/adminlte.min';
+import 'admin-lte';
 import '@fortawesome/fontawesome-free/js/all.min';

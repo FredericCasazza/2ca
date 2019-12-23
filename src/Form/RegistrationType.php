@@ -7,6 +7,7 @@ namespace App\Form;
 use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -18,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * Class RegisterType
  * @package App\Form
  */
-class RegisterType extends AbstractType
+class RegistrationType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -59,8 +60,15 @@ class RegisterType extends AbstractType
                     ]
                 ]
             ])
+            ->add('recaptchaToken', HiddenType::class, [
+                'mapped' => false,
+                'attr' => [
+                    'class' => 'recaptcha-token',
+                    'data-action' => 'registration'
+                ]
+            ])
             ->add('submit', SubmitType::class, [
-                'label' => "S'enregistrer",
+                'label' => "S'inscrire",
                 'attr' => [
                     'class' => "btn btn-lg btn-block btn-primary mt-4"
                 ]

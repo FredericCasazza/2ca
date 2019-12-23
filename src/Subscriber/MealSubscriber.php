@@ -5,6 +5,8 @@ namespace App\Subscriber;
 
 
 use App\Event\Meal\CreateMealEvent;
+use App\Event\Meal\PublishMealEvent;
+use App\Event\Meal\UnpublishMealEvent;
 use App\Event\Meal\UpdateMealEvent;
 use App\Repository\MealRepository;
 use Doctrine\ORM\OptimisticLockException;
@@ -43,6 +45,12 @@ class MealSubscriber implements EventSubscriberInterface
             UpdateMealEvent::class => [
                 ['update', 20]
             ],
+            PublishMealEvent::class => [
+                ['publish', 20]
+            ],
+            UnpublishMealEvent::class => [
+                ['unpublish', 20]
+            ],
         ];
     }
 
@@ -63,6 +71,28 @@ class MealSubscriber implements EventSubscriberInterface
      * @throws OptimisticLockException
      */
     public function update(UpdateMealEvent $event)
+    {
+        $meal = $event->getMeal();
+        $this->mealRepository->update($meal);
+    }
+
+    /**
+     * @param PublishMealEvent $event
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function publish(PublishMealEvent $event)
+    {
+        $meal = $event->getMeal();
+        $this->mealRepository->update($meal);
+    }
+
+    /**
+     * @param PublishMealEvent $event
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function unpublish(PublishMealEvent $event)
     {
         $meal = $event->getMeal();
         $this->mealRepository->update($meal);

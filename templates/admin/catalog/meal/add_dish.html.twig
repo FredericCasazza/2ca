@@ -1,0 +1,5 @@
+{{ form_start(form, {'attr': {'class': 'modal-action-form', 'data-action-url': path('admin_meal_add_dish', {'id': form.vars.data.meal.id}) }}) }}
+    {{ form_row(form.category) }}
+    {{ form_row(form.label) }}
+<button type="submit" class="btn btn-primary" id="create_button">Ajouter</button>
+{{ form_end(form) }}

@@ -6,7 +6,6 @@ namespace App\Controller\Admin;
 
 use App\Entity\Dish;
 use App\Entity\Meal;
-use App\Form\DishRemoveType;
 use App\Form\DishType;
 use App\Form\MealType;
 use App\Manager\DishCategoryManager;
@@ -25,21 +24,94 @@ class MealController extends AbstractController
 {
 
     /**
-     * @Route("/admin/catalog/meal", name="admin_catalog_meals")
+     * @Route("/admin/meal", name="admin_meals")
+     * @param Request $request
      * @param MealManager $mealManager
      * @return Response
      */
     public function meals(Request $request, MealManager $mealManager)
     {
-        $meals = $mealManager->paginate($request->query->getInt('page', 1), 10);
+        $meals = $mealManager->paginate($request->query->getInt('page', 1), 15);
 
-        return $this->render('admin/meal/list.html.twig', [
+        return $this->render('admin/catalog/meal/list.html.twig', [
             'meals' => $meals
         ]);
     }
 
     /**
-     * @Route("/admin/catalog/meal/create", name="admin_catalog_meal_create")
+     * @Route("/admin/meal/{id}/view", name="admin_meal")
+     * @param $id
+     * @param MealManager $mealManager
+     * @param DishCategoryManager $dishCategoryManager
+     * @param DishManager $dishManager
+     * @return Response
+     */
+    public function view($id, MealManager $mealManager, DishCategoryManager $dishCategoryManager, DishManager $dishManager)
+    {
+        $meal = $mealManager->find($id);
+
+        if(!$meal instanceof Meal)
+        {
+            $this->addFlash('danger', "Le menu {$id} n'existe pas");
+            $this->redirectToRoute('admin_meals');
+        }
+
+        $dishesByCategories = [];
+        foreach($dishCategoryManager->findEnableOrderedByPosition() as $category)
+        {
+            $dishesByCategories[$category->getLabel()] = $dishManager->findByMealAndDishCategory($meal, $category);
+        }
+
+        return $this->render('admin/catalog/meal/view.html.twig', [
+            'meal' => $meal,
+            'dishesByCategories' => $dishesByCategories
+        ]);
+    }
+
+    /**
+     * @Route("/admin/meal/{id}/publish", name="admin_meal_publish")
+     * @param $id
+     * @param MealManager $mealManager
+     * @return Response
+     * @throws \Exception
+     */
+    public function publish($id, MealManager $mealManager)
+    {
+        $meal = $mealManager->find($id);
+
+        if(!$meal instanceof Meal)
+        {
+            throw new \Exception("Le menu {$id} n'existe pas");
+        }
+
+        $mealManager->publish($meal);
+
+        return $this->json(true);
+    }
+
+    /**
+     * @Route("/admin/meal/{id}/unpublish", name="admin_meal_unpublish")
+     * @param $id
+     * @param MealManager $mealManager
+     * @return Response
+     * @throws \Exception
+     */
+    public function unpublish($id, MealManager $mealManager)
+    {
+        $meal = $mealManager->find($id);
+
+        if(!$meal instanceof Meal)
+        {
+            throw new \Exception("Le menu {$id} n'existe pas");
+        }
+
+        $mealManager->unpublish($meal);
+
+        return $this->json(true);
+    }
+
+    /**
+     * @Route("/admin/meal/create", name="admin_meal_create")
      * @param Request $request
      * @param MealManager $mealManager
      * @return Response
@@ -59,42 +131,13 @@ class MealController extends AbstractController
 
         }
 
-        return $this->render('admin/meal/create.html.twig', [
+        return $this->render('admin/catalog/meal/create.html.twig', [
             'form' => $form->createView()
         ]);
     }
 
     /**
-     * @Route("/admin/catalog/meal/{id}", name="admin_catalog_meal")
-     * @param $id
-     * @param MealManager $mealManager
-     * @param DishCategoryManager $dishCategoryManager
-     * @return Response
-     */
-    public function view($id, MealManager $mealManager, DishCategoryManager $dishCategoryManager, DishManager $dishManager)
-    {
-        $meal = $mealManager->find($id);
-
-        if(!$meal instanceof Meal)
-        {
-            $this->addFlash('danger', "Le menu {$id} n'existe pas");
-            $this->redirectToRoute('admin_catalog_meals');
-        }
-
-        $dishesByCategories = [];
-        foreach($dishCategoryManager->findEnableOrderedByPosition() as $category)
-        {
-            $dishesByCategories[$category->getLabel()] = $dishManager->findByMealAndDishCategory($meal, $category);
-        }
-
-        return $this->render('admin/meal/view.html.twig', [
-            'meal' => $meal,
-            'dishesByCategories' => $dishesByCategories
-        ]);
-    }
-
-    /**
-     * @Route("/admin/catalog/meal/{id}/edit", name="admin_catalog_meal_edit", options = { "expose" = true })
+     * @Route("/admin/meal/{id}/edit", name="admin_meal_edit")
      * @param $id
      * @param Request $request
      * @param MealManager $mealManager
@@ -121,13 +164,13 @@ class MealController extends AbstractController
             return $this->json(true);
         }
 
-        return $this->render('admin/meal/edit.html.twig', [
+        return $this->render('admin/catalog/meal/edit.html.twig', [
             'form' => $form->createView()
         ]);
     }
 
     /**
-     * @Route("/admin/catalog/meal/{id}/dish/add", name="admin_catalog_meal_add_dish")
+     * @Route("/admin/meal/{id}/dish/add", name="admin_meal_add_dish")
      * @param $id
      * @param Request $request
      * @param MealManager $mealManager
@@ -159,44 +202,9 @@ class MealController extends AbstractController
             return $this->json(true);
         }
 
-        return $this->render('admin/meal/add_dish.html.twig', [
+        return $this->render('admin/catalog/meal/add_dish.html.twig', [
             'form' => $form->createView()
         ]);
-    }
-
-    /**
-     * @Route("/admin/dish/{id}/remove", name="admin_dish_remove")
-     * @param $id
-     * @param Request $request
-     * @param DishManager $dishManager
-     * @return Response
-     * @throws \Exception
-     */
-    public function removeDish($id, Request $request, DishManager $dishManager)
-    {
-        $dish = $dishManager->find($id);
-
-        if(!$dish instanceof Dish)
-        {
-            throw new \Exception("Le plat {$id} n'existe pas");
-        }
-
-        $form = $this->createForm(DishRemoveType::class, $dish);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid())
-        {
-            /** @var Dish $dish */
-            $dish = $form->getData();
-            $dishManager->remove($dish);
-
-            return $this->json(true);
-        }
-
-        return $this->render('admin/meal/remove_dish.html.twig', [
-            'form' => $form->createView()
-        ]);
-
     }
 
 }

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\DishRepository")
@@ -18,6 +19,7 @@ class Dish
 
     /**
      * @ORM\Column(type="string", length=255, nullable=false)
+     * @Assert\NotBlank()
      */
     private $label;
 
@@ -30,6 +32,7 @@ class Dish
      * @var DishCategory
      * @ORM\ManyToOne(targetEntity="DishCategory")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     * @Assert\NotBlank()
      */
     private $category;
 
@@ -37,6 +40,7 @@ class Dish
      * @var Meal
      * @ORM\ManyToOne(targetEntity="Meal", inversedBy="dishes")
      * @ORM\JoinColumn(name="meal_id", referencedColumnName="id")
+     * @Assert\NotBlank()
      */
     private $meal;
 

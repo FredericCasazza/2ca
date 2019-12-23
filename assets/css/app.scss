@@ -24,11 +24,36 @@ html, body {
   box-shadow: 1px 1px 2px #dee2e6;
 }
 
+@media (max-width: 576px) {
+  .flash {
+    width: 250px;
+  }
+}
+
+@media (min-width: 576px) {
+  .flash {
+    width: 500px;
+  }
+}
+
 /*
   Buttons
  */
 
 .btn-primary {
+  color: $white !important;
+}
+
+.dropdown-actions .dropdown-toggle {
+  color: $dark !important;
+}
+
+.dropdown-actions .dropdown-toggle:after {
+  content: none;
+}
+
+.dropdown-actions .dropdown-item:hover {
+  background: $primary;
   color: $white;
 }
 
@@ -301,4 +326,9 @@ html, body {
   font-weight: 700 !important;
   font-size: 1.6rem;
   text-shadow: 1px 1px 2px;
+}
+
+.custom-switch .custom-control-label:before,
+.custom-switch .custom-control-label:after {
+  cursor: pointer;
 }

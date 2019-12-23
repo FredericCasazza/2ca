@@ -3,13 +3,21 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Form\RegisterType;
+use App\Form\RegistrationType;
+use App\Helper\ConfigurationHelper;
 use App\Manager\UserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 /**
  * Class SecurityController
@@ -25,7 +33,7 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser()) {
-             return $this->redirectToRoute('homepage');
+            return $this->redirectToRoute('homepage');
         }
 
         // get the login error if there is one
@@ -43,16 +51,43 @@ class SecurityController extends AbstractController
      * @Route("/registration", name="app_registration")
      * @param Request $request
      * @param UserManager $userManager
+     * @param ConfigurationHelper $configurationHelper
      * @return Response
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
-    public function registration(Request $request, UserManager $userManager)
+    public function registration(Request $request, UserManager $userManager, ConfigurationHelper $configurationHelper)
     {
         $user = new User();
-        $form = $this->createForm(RegisterType::class, $user);
+        $form = $this->createForm(RegistrationType::class, $user);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid())
         {
+            // Check recaptcha token if recaptcha is enable
+            if($configurationHelper->getParameter('recaptchaEnable'))
+            {
+                $recaptchaToken = $form->get('recaptchaToken')->getData();
+                $client = HttpClient::create();
+                $response = $client->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [
+                    'body' => [
+                        'secret' => $this->getParameter('recaptcha_secret_key'),
+                        'response' => $recaptchaToken
+                    ]
+                ]);
+                $content = $response->toArray();
+                if($response->getStatusCode() !== 200 || !array_key_exists('success', $content) || $content['success'] !== true)
+                {
+                    $form->addError(new FormError("Le captcha n'est pas valide, veuillez réessayer"));
+                    return $this->render('security/registration.html.twig', [
+                        'form' => $form->createView()
+                    ]);
+                }
+            }
+
             $user = $form->getData();
             $userManager->create($user);
 

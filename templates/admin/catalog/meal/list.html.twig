@@ -1,0 +1,93 @@
+{% extends 'admin/catalog/meal/layout.html.twig' %}
+
+{% block main %}
+    <div class="toolbar sticky-top">
+        <div class="d-flex justify-content-end">
+            <button type="button" class="modal-action btn btn-primary"
+                    data-action-title="Ajouter un menu"
+                    data-action-url="{{ path('admin_meal_create') }}"
+            >
+                Ajouter un menu
+            </button>
+        </div>
+    </div>
+
+    <div class="container-fluid ">
+        <div class="card table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th class="col-auto">#</th>
+                    <th>Date</th>
+                    <th>Repas</th>
+                    <th>Etablissements</th>
+                    <th>Publié</th>
+                    <th class="col-auto"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for meal in meals %}
+                    <tr>
+                        <td>{{ meal.id }}.</td>
+                        <td>
+                            <a href="{{ path('admin_meal', {'id': meal.id}) }}">
+                                {{ meal.date|localdate('long') }}
+                            </a>
+                        </td>
+                        <td>{{ meal.period.label }}</td>
+                        <td>
+                            {% set establishments = '' %}
+                            {% for establishment in meal.establishments %}
+                                {% set establishments = establishments ~ establishment.label ~ ', ' %}
+                            {% endfor %}
+                            {{ establishments|trim(', ', 'right') }}
+                        </td>
+                        <td>
+                            <div class="custom-control custom-switch">
+                                {% set meal_published = "" %}
+                                {% if meal.published %}
+                                    {% set meal_published = "checked" %}
+                                {% endif %}
+                                <input type="checkbox" class="meal-published custom-control-input" id="meal_{{ meal.id }}_published" {{ meal_published }}
+                                       data-publish-url="{{ path('admin_meal_publish', {'id': meal.id}) }}"
+                                       data-unpublish-url="{{ path('admin_meal_unpublish', {'id': meal.id}) }}"
+                                >
+                                <label class="custom-control-label" for="meal_{{ meal.id }}_published"></label>
+                            </div>
+                        </td>
+                        <td class="text-right">
+                            <div class="dropdown dropdown-actions">
+                                <button class="btn btn-link dropdown-toggle" type="button" id="meal_{{ meal.id }}_actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="meal_{{ meal.id }}_actions">
+                                    <a class="dropdown-item" href="#">Dupliquer</a>
+                                    <a class="dropdown-item" href="#">Supprimer</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="navigation">
+            {{ knp_pagination_render(meals) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('.meal-published').change(function(){
+            let url = '';
+            if($(this).is(':checked')){
+                url = $(this).data('publish-url');
+            }else{
+                url = $(this).data('unpublish-url');
+            }
+            $.get(url);
+        });
+    </script>
+{% endblock %}

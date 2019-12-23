@@ -3,7 +3,9 @@
 namespace App\Security;
 
 use App\Entity\User;
+use App\Helper\ConfigurationHelper;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -19,6 +21,11 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\DecodingExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 /**
  * Class LoginFormAuthenticator
@@ -44,6 +51,10 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
      * @var UserPasswordEncoderInterface
      */
     private $passwordEncoder;
+    /**
+     * @var ConfigurationHelper
+     */
+    private $configurationHelper;
 
     /**
      * LoginFormAuthenticator constructor.
@@ -51,13 +62,21 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
      * @param UrlGeneratorInterface $urlGenerator
      * @param CsrfTokenManagerInterface $csrfTokenManager
      * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param ConfigurationHelper $configurationHelper
      */
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        UrlGeneratorInterface $urlGenerator,
+        CsrfTokenManagerInterface $csrfTokenManager,
+        UserPasswordEncoderInterface $passwordEncoder,
+        ConfigurationHelper $configurationHelper
+    )
     {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->configurationHelper =$configurationHelper;
     }
 
     /**
@@ -80,6 +99,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
             'email' => $request->request->get('email'),
             'password' => $request->request->get('password'),
             'csrf_token' => $request->request->get('_csrf_token'),
+            'recaptcha_token' => $request->request->get('_recaptcha_token'),
         ];
         $request->getSession()->set(
             Security::LAST_USERNAME,
@@ -93,12 +113,34 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator implements P
      * @param mixed $credentials
      * @param UserProviderInterface $userProvider
      * @return object|UserInterface|null
+     * @throws ClientExceptionInterface
+     * @throws DecodingExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         $token = new CsrfToken('authenticate', $credentials['csrf_token']);
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
+        }
+
+        // Check recaptcha token if recaptcha is enable
+        if($this->configurationHelper->getParameter('recaptchaEnable'))
+        {
+            $recaptchaToken = $credentials['recaptcha_token'];
+            $client = HttpClient::create();
+            $response = $client->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [
+                'body' => [
+                    'secret' => $this->configurationHelper->getParameter('recaptchaSecretKey'),
+                    'response' => $recaptchaToken
+                ]
+            ]);
+            $content = $response->toArray();
+            if($response->getStatusCode() !== 200 || !array_key_exists('success', $content) || $content['success'] !== true) {
+                throw new CustomUserMessageAuthenticationException('Captcha invalide');
+            }
         }
 
         $user = $this->entityManager->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
