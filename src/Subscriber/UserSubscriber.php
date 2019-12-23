@@ -5,6 +5,7 @@ namespace App\Subscriber;
 
 
 use App\Event\User\CreateUserEvent;
+use App\Event\User\UpdateUserEvent;
 use App\Repository\UserRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -39,6 +40,9 @@ class UserSubscriber implements EventSubscriberInterface
             CreateUserEvent::class => [
                 ['create', 20]
             ],
+            UpdateUserEvent::class => [
+                ['update', 20]
+            ]
         ];
     }
 
@@ -51,5 +55,16 @@ class UserSubscriber implements EventSubscriberInterface
     {
         $user = $event->getUser();
         $this->userRepository->create($user);
+    }
+
+    /**
+     * @param UpdateUserEvent $event
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function update(UpdateUserEvent $event)
+    {
+        $user = $event->getUser();
+        $this->userRepository->update($user);
     }
 }

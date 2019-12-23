@@ -1,0 +1,19 @@
+{% extends 'site/layout.html.twig' %}
+
+{% block main %}
+    <div class="container-errors">
+        <h1 class="text-primary">
+            <i class="fas fa-ban"></i>
+            403
+        </h1>
+        <h2>
+            Accés non autorisé
+        </h2>
+        <h3>
+            Nous sommes désolé, vous ne pouvez pas accéder à la page demandée.
+        </h3>
+        <p>
+            <a href="{{ path('homepage') }}" class="btn btn-lg btn-primary mt-4">Retourner à la page d'accueil</a>
+        </p>
+    </div>
+{% endblock %}

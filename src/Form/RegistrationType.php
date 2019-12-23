@@ -60,13 +60,6 @@ class RegistrationType extends AbstractType
                     ]
                 ]
             ])
-            ->add('recaptchaToken', HiddenType::class, [
-                'mapped' => false,
-                'attr' => [
-                    'class' => 'recaptcha-token',
-                    'data-action' => 'registration'
-                ]
-            ])
             ->add('submit', SubmitType::class, [
                 'label' => "S'inscrire",
                 'attr' => [

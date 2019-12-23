@@ -70,11 +70,11 @@ class SecurityController extends AbstractController
             // Check recaptcha token if recaptcha is enable
             if($configurationHelper->getParameter('recaptchaEnable'))
             {
-                $recaptchaToken = $form->get('recaptchaToken')->getData();
+                $recaptchaToken = $request->request->get('_recaptcha_token');
                 $client = HttpClient::create();
                 $response = $client->request('POST', 'https://www.google.com/recaptcha/api/siteverify', [
                     'body' => [
-                        'secret' => $this->getParameter('recaptcha_secret_key'),
+                        'secret' => $configurationHelper->getParameter('recaptchaSecretKey'),
                         'response' => $recaptchaToken
                     ]
                 ]);

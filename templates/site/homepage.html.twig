@@ -6,9 +6,11 @@
             <h1>
                 L'entreprise de <span class="text-primary">restauration collective</span> en région <span class="text-primary">PACA</span> qu'il vous faut.
             </h1>
+            {% if app.user is empty %}
             <div class="mt-3">
                 <a href="{{ path('app_login') }}" class="btn btn-primary">Connectez-vous</a>
             </div>
+            {% endif %}
         </div>
         <a href="#section-partners" class="down-arrow">
             <i class="fa fa-chevron-circle-down fa-3x text-primary"></i>

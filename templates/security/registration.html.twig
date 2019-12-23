@@ -4,9 +4,16 @@
     <section class="section-login">
         <div>
             {{ form_start(form) }}
+                <input type="hidden" name="_recaptcha_token" class="recaptcha-token">
                 <h3 class="mb-4">Créer un compte</h3>
                 {{ form(form) }}
             {{ form_end(form) }}
         </div>
     </section>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    {% include 'security/recaptcha.html.twig' %}
 {% endblock %}

@@ -31,13 +31,19 @@
                         $('.ajax_loader').hide();
                     });
 
+                    $(document).ajaxError(function(error) {
+                        $(document).Toasts('create', {
+                            class: 'bg-danger flash',
+                            body: 'Une erreur est survenue'
+                        });
+                    });
+
                     $('#modal_app').on('hidden.bs.modal', function () {
                         $('#modal_app_title').empty();
                         $('#modal_app_body').empty();
                     });
                 });
             </script>
-            {% include 'security/recaptcha.html.twig' %}
             {% include 'flash.html.twig' %}
         {% endblock %}
     </body>

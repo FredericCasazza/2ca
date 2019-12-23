@@ -10,4 +10,15 @@
             <a href="{{ path('homepage') }}" class="nav-link">Retour au site</a>
         </li>
     </ul>
+    <ul class="navbar-nav ml-auto">
+        {% include 'admin/notifications.html.twig' %}
+        <li class="nav-item dropdown">
+            <a href="#" class="user-dropdown nav-link dropdown-toggle text-primary" id="user-dropdown-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {{ app.user.firstname ~ ' ' ~ app.user.lastname }}
+            </a>
+            <div class="dropdown-menu" aria-labelledby="user-dropdown-link">
+                <a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a>
+            </div>
+        </li>
+    </ul>
 </nav>

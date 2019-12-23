@@ -4,8 +4,6 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    recaptcha_site_key: 6Lc4RckUAAAAAOwTFdxFdpaSJrSF5rdemQ27q7tC
-    recaptcha_secret_key: 6Lc4RckUAAAAADxEPOUQ7QEin5R8H_Yu_16FE5Cv
 
 services:
 
@@ -20,6 +18,10 @@ services:
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
+
+    App\Helper\:
+        resource: '../src/Helper'
+        public: true
 
     App\Helper\ConfigurationHelper:
         public: true

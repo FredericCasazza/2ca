@@ -12,6 +12,7 @@ use App\Manager\DishCategoryManager;
 use App\Manager\DishManager;
 use App\Manager\MealManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -29,7 +30,7 @@ class MealController extends AbstractController
      * @param MealManager $mealManager
      * @return Response
      */
-    public function meals(Request $request, MealManager $mealManager)
+    public function list(Request $request, MealManager $mealManager)
     {
         $meals = $mealManager->paginate($request->query->getInt('page', 1), 15);
 
@@ -44,7 +45,7 @@ class MealController extends AbstractController
      * @param MealManager $mealManager
      * @param DishCategoryManager $dishCategoryManager
      * @param DishManager $dishManager
-     * @return Response
+     * @return Response|RedirectResponse
      */
     public function view($id, MealManager $mealManager, DishCategoryManager $dishCategoryManager, DishManager $dishManager)
     {
@@ -53,7 +54,7 @@ class MealController extends AbstractController
         if(!$meal instanceof Meal)
         {
             $this->addFlash('danger', "Le menu {$id} n'existe pas");
-            $this->redirectToRoute('admin_meals');
+            return $this->redirectToRoute('admin_meals');
         }
 
         $dishesByCategories = [];

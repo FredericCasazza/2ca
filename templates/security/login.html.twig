@@ -48,3 +48,8 @@
     </section>
 {% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    {% include 'security/recaptcha.html.twig' %}
+{% endblock %}
+

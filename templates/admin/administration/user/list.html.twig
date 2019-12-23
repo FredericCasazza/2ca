@@ -1,0 +1,73 @@
+{% extends 'admin/administration/user/layout.html.twig' %}
+
+{% block main %}
+    {#
+    <div class="toolbar sticky-top">
+        <div class="d-flex justify-content-end">
+            <button type="button" class="modal-action btn btn-primary"
+                    data-action-title="Ajouter un menu"
+                    data-action-url="{{ path('admin_meal_create') }}"
+            >
+                Ajouter un menu
+            </button>
+        </div>
+    </div>
+    #}
+
+    <div class="container-fluid pt-2">
+        <div class="card table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Email</th>
+                    <th>Rôles</th>
+                    <th class="col-auto"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>
+                            {{ user.lastname }}
+                        </td>
+                        <td>
+                            {{ user.firstname }}
+                        </td>
+                        <td>
+                            <a href="{{ path('admin_user_edit', {'id': user.id}) }}">
+                                {{ user.email }}
+                            </a>
+                        </td>
+                        <td>
+                            {% set roles = '' %}
+                            {% for role in user.roles %}
+
+                                    {% set roles = roles ~ helper.get('role').getLabel(role) ~ ', ' %}
+
+                            {% endfor %}
+                            {{ roles|trim(', ', 'right') }}
+                        </td>
+                        <td class="text-right">
+                            {#
+                            <div class="dropdown dropdown-actions">
+                                <button class="btn btn-link dropdown-toggle" type="button" id="meal_{{ meal.id }}_actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="meal_{{ meal.id }}_actions">
+                                    <a class="dropdown-item" href="#">Supprimer</a>
+                                </div>
+                            </div>
+                            #}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="navigation">
+            {{ knp_pagination_render(users) }}
+        </div>
+    </div>
+{% endblock %}

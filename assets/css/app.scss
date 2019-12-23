@@ -37,6 +37,34 @@ html, body {
 }
 
 /*
+  Errors
+ */
+
+.container-errors {
+  background: $white;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.container-errors h1 {
+  text-transform: uppercase;
+  letter-spacing: 0.3rem;
+  font-size: 5rem;
+}
+
+.container-errors h2 {
+  text-transform: uppercase;
+  letter-spacing: 0.3rem;
+  font-size: 3rem;
+}
+
+
+/*
   Buttons
  */
 
