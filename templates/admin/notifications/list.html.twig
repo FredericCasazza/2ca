@@ -1,0 +1,126 @@
+{% extends 'admin/notifications/layout.html.twig' %}
+
+{% block main %}
+    <div class="container-fluid pt-2">
+        <div class="card table-responsive">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th class="col-auto">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="bulk_action_select_all">
+                            <label class="custom-control-label" for="bulk_action_select_all"></label>
+                        </div>
+                    </th>
+                    <th class="col-auto"></th>
+                    <th class="">Date</th>
+                    <th class="">Message</th>
+                    <th class="col-auto"></th>
+                    {#<th class="col-auto"></th>#}
+                </tr>
+                </thead>
+                <tbody class="font-weight-bold">
+                {% for notification in notifications %}
+                    <tr class="notification {% if notification.checked %} notification-checked {% endif %}">
+                        <td class="bulk-action-element">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input bulk-action-selected-element"
+                                       id="bulk_action_selected_element_{{ notification.id }}"
+                                       name="bulk_action_selected_element[]"
+                                       data-bulk-action-check="{{ path('admin_notification_ajax_check', {'id': notification.id}) }}"
+                                           data-bulk-action-delete="{{ path('admin_notification_ajax_delete', {'id': notification.id}) }}"
+                                >
+                                <label class="custom-control-label" for="bulk_action_selected_element_{{ notification.id }}"></label>
+                            </div>
+                        </td>
+                        <td>
+                            {{ helper.get('notification').getIcon(notification.type)|raw }}
+                        </td>
+                        <td>
+                            {{ notification.creationDate|localdatetime }}
+                        </td>
+                        <td>
+                            {{ notification.message }}
+                        </td>
+                        <td>
+                            {% if notification.action is not null and notification.url is not null  %}
+                                <button class="notification-action-button btn btn-primary"
+                                        data-check-url="{{ path('admin_notification_ajax_check', {'id': notification.id}) }}"
+                                        data-action-url="{{ notification.url }}"
+                                >
+                                    {{ notification.action }}
+                                </button>
+                            {% endif %}
+                        </td>
+                        {#
+                        <td class="text-right">
+                            <div class="dropdown dropdown-actions">
+                                <button class="btn btn-link dropdown-toggle" type="button" id="notifiation_{{ notification.id }}_actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="notification_{{ notification.id }}_actions">
+                                    <a class="dropdown-item" href="#">Marquer comme lue</a>
+                                </div>
+                            </div>
+                        </td>
+                        #}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="dropdown ">
+            <button class="btn btn-primary dropdown-toggle disabled" id="bulk_action_button" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Actions groupées
+            </button>
+            <div class="dropdown-menu" aria-labelledby="bulk_action_button">
+                <button class="modal-action btn-link dropdown-item"
+                        data-action-title="Marquer les notifications comme lues"
+                        data-action-url="{{ path('bulk_action') }}"
+                        data-action-event="bulk.notifications.check"
+                        data-action-confirm=true
+                        data-action-confirm-button="Marquer comme lues"
+                        data-action-confirm-message="Êtes-vous sûr(e) de vouloir marquer les notifications sélectionnées comme lues ?"
+                >Marquer comme lues</button>
+                <button class="modal-action btn-link dropdown-item"
+                        data-action-title="Supprimer les notifications"
+                        data-action-url="{{ path('bulk_action') }}"
+                        data-action-event="bulk.notifications.delete"
+                        data-action-confirm=true
+                        data-action-confirm-button="Supprimer"
+                        data-action-confirm-message="Êtes-vous sûr(e) de vouloir supprimer les notifications sélectionnées ?"
+                >Supprimer</button>
+            </div>
+        </div>
+        <div class="navigation">
+            {{ knp_pagination_render(notifications) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $(document).ready(function(){
+
+            $('.notification-action-button').click(function () {
+                let check_url = $(this).data('check-url');
+                let action_url = $(this).data('action-url');
+                $.get(check_url).done(function () {
+                    location.href = action_url;
+                });
+            });
+
+            $(document).on('bulk.notifications.check', function () {
+                $('#bulk_action_text').html('Marquage en cours...');
+                bulkAction('check', $('.bulk-action-selected-element:checked'), 0, 0);
+            });
+
+            $(document).on('bulk.notifications.delete', function () {
+                $('#bulk_action_text').html('Suppression en cours...');
+                bulkAction('delete', $('.bulk-action-selected-element:checked'), 0, 0);
+            });
+
+        });
+    </script>
+{% endblock %}

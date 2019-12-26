@@ -16,20 +16,23 @@ class DishController extends AbstractController
 {
 
     /**
-     * @Route("/admin/dish/{id}/remove", name="admin_dish_remove")
+     * @Route("/admin/dish/{id}/ajax_remove", name="admin_dish_ajax_remove")
      * @param $id
      * @param Request $request
      * @param DishManager $dishManager
      * @return Response
      * @throws \Exception
      */
-    public function remove($id, Request $request, DishManager $dishManager)
+    public function ajaxRemove($id, Request $request, DishManager $dishManager)
     {
         $dish = $dishManager->find($id);
 
         if(!$dish instanceof Dish)
         {
-            throw new \Exception("Le plat {$id} n'existe pas");
+            return $this->json([
+                'status' => false,
+                'content' => "Le plat {$id} n'existe pas"
+            ]);
         }
 
         $form = $this->createForm(DishRemoveType::class, $dish);
@@ -41,11 +44,19 @@ class DishController extends AbstractController
             $dish = $form->getData();
             $dishManager->remove($dish);
 
-            return $this->json(true);
+            return $this->json([
+                'status' => true,
+                'content' => null,
+            ]);
         }
 
-        return $this->render('admin/meal/remove_dish.html.twig', [
+        $render = $this->get('twig')->render('admin/catalog/meal/remove_dish.html.twig', [
             'form' => $form->createView()
+        ]);
+
+        return $this->json([
+            'status' => true,
+            'content' => $render,
         ]);
 
     }

@@ -37,6 +37,11 @@ class Notification
     private $message;
 
     /**
+     * @ORM\Column(type="string", length=75, nullable=false)
+     */
+    private $action;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $url;
@@ -132,6 +137,24 @@ class Notification
     {
         $this->message = $message;
 
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAction()
+    {
+        return $this->action;
+    }
+
+    /**
+     * @param string|null $action
+     * @return Notification
+     */
+    public function setAction($action): self
+    {
+        $this->action = $action;
         return $this;
     }
 

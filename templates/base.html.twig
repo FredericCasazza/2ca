@@ -1,50 +1,262 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="2CA Restauration Website">
-        <meta name="keywords" content="2CA Restauration,restauration collective,restaurant d'entreprise">
-        <meta name="author" content="Frédéric Casazza">
-        <title>{% block title %}2CA Restauration{% endblock %}</title>
-        <link rel="icon" type="image/x-icon" href="{{asset('build/images/favicon.ico')}}" />
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
-    </head>
-    <body class="sidebar-mini">
-        <div class="ajax_loader">
-            <i class="fas fa-circle-notch text-primary fa-2x fa-spin"></i>
-        </div>
-        {% block body %}{% endblock %}
-        {% include'modal.html.twig' %}
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-            <script>
-                $(document).ready(function () {
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="2CA Restauration Website">
+    <meta name="keywords" content="2CA Restauration,restauration collective,restaurant d'entreprise">
+    <meta name="author" content="Frédéric Casazza">
+    <title>{% block title %}2CA Restauration{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="{{asset('build/images/favicon.ico')}}" />
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+</head>
+<body class="sidebar-mini">
+<div class="container-loader">
+    <div class="loader">
+        <i class="fas fa-circle-notch text-primary fa-2x fa-spin"></i>
+    </div>
+</div>
+{% block body %}{% endblock %}
+{% include'modal.html.twig' %}
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+    {#
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
+    #}
+    <script>
+        $(document).ready(function () {
 
-                    $(document).ajaxStart(function () {
-                        $('.ajax_loader').show();
-                    });
+            /*******
+             *
+             * Ajax
+             *
+             */
 
-                    $(document).ajaxStop(function () {
-                        $('.ajax_loader').hide();
-                    });
+            let $loader = $('.loader');
 
-                    $(document).ajaxError(function(error) {
-                        $(document).Toasts('create', {
-                            class: 'bg-danger flash',
-                            body: 'Une erreur est survenue'
-                        });
-                    });
+            /**
+             * Show spinner when ajax start
+             */
+            $(document).ajaxStart(function () {
+                $loader.show();
+            });
 
-                    $('#modal_app').on('hidden.bs.modal', function () {
-                        $('#modal_app_title').empty();
-                        $('#modal_app_body').empty();
+            /**
+             * Hide spinner when ajax finished
+             */
+            $(document).ajaxStop(function () {
+                $loader.hide();
+            });
+
+            /**
+             *  Show error message when ajax failed
+             */
+            $(document).ajaxError(function(error) {
+                showAlert('danger', null, "Une erreur est survenue");
+            });
+
+
+
+            /*******
+             *
+             * Modal
+             *
+             */
+
+            let $modal_app = $('#modal_app');
+            let $modal_app_title = $('#modal_app_title');
+            let $modal_app_body = $('#modal_app_body');
+
+            /**
+             * Remove modal content after closing
+             */
+            $modal_app.on('hidden.bs.modal', function () {
+                $modal_app_title.empty();
+                $modal_app_body.empty();
+            });
+
+            /**
+             * Load modal content and show it
+             */
+            $('.modal-action').click(function(){
+                let title = $(this).data('action-title');
+                let url = $(this).data('action-url');
+                let event = $(this).data('action-event');
+                let confirm = $(this).data('action-confirm');
+
+                if(confirm)
+                {
+                    let confirm_button = $(this).data('action-confirm-button');
+                    let confirm_message = $(this).data('action-confirm-message');
+                    bootbox.confirm({
+                        message: confirm_message,
+                        buttons: {
+                            confirm: {
+                                label: confirm_button,
+                                className: 'btn btn-danger'
+                            },
+                            cancel: {
+                                label: 'Annuler',
+                                className: 'btn btn-outline-dark'
+                            }
+                        },
+                        callback: function(result){
+                            if(result)
+                            {
+                                handleModalAction($modal_app, $modal_app_title, $modal_app_body, title, url, event )
+                            }
+                        }
                     });
+                }else{
+                    handleModalAction($modal_app, $modal_app_title, $modal_app_body, title, url, event );
+                }
+            });
+
+            /**
+             * When submitting modal form, use ajax request to post form data
+             */
+            $(document).on('submit', '.modal-action-form', function(e){
+                e.preventDefault();
+                let url = $(this).data('action-url');
+                let data = $(this).serialize();
+                $.post(
+                    url,
+                    data
+                ).done(function(response){
+                    if(handleAjaxResponse(response))
+                    {
+                        $modal_app.modal('hide');
+                        document.location.reload();
+                    }
                 });
-            </script>
-            {% include 'flash.html.twig' %}
-        {% endblock %}
-    </body>
+            });
+
+            /**
+             * If event is specified, triggers the event after opening hte modal
+             */
+            $modal_app.on('shown.bs.modal', function () {
+                let event = $modal_app.data('action-event');
+                if(event)
+                {
+                    $(document).trigger(event);
+                }
+            });
+
+
+
+            /*******
+             *
+             * Bulk
+             *
+             */
+
+            let $bulk_action_button = $('#bulk_action_button');
+            let $bulk_action_selected_element = $('.bulk-action-selected-element');
+
+            /**
+             * Enable the bulk actions button if at least one element is selected
+             */
+            $bulk_action_selected_element.change(function(){
+                let bulk_action_button = $bulk_action_button;
+                $('.bulk-action-selected-element:checked').length > 0 ? bulk_action_button.removeClass('disabled') : bulk_action_button.addClass('disabled');
+            });
+
+            /**
+             * Select/unselect all elements by clicking on bulk checkbox
+             */
+            $('#bulk_action_select_all').change(function(){
+                let bulk_action_button = $bulk_action_button;
+                $bulk_action_selected_element.prop('checked', $(this).prop('checked'));
+                $('.bulk-action-selected-element:checked').length > 0 ? bulk_action_button.removeClass('disabled') : bulk_action_button.addClass('disabled');
+            });
+
+        });
+    </script>
+    <script>
+        /**
+         * Create a Toasts message
+         * @param type
+         * @param title
+         * @param message
+         */
+        function showAlert(type, title, message)
+        {
+            let class_type = 'flash bg-'+type;
+            $(document).Toasts('create', {
+                class: class_type,
+                title: title,
+                body: message
+            });
+        }
+
+        function handleModalAction(
+            $modal_app,
+            $modal_app_title,
+            $modal_app_body,
+            title,
+            url,
+            event
+        ) {
+            $.get(
+                url
+            ).done(function(response){
+                if(handleAjaxResponse(response)) {
+                    $modal_app_title.html(title);
+                    $modal_app_body.html(response.content);
+                    $modal_app.modal('show');
+                    $modal_app.data('action-event', event);
+                }
+            });
+        }
+
+        /**
+         *
+         * @param response
+         */
+        function handleAjaxResponse(response)
+        {
+            let status = (response.status) ? response.status : false;
+            let content = (response.content) ? response.content : "Une erreur est survenue";
+            if(response.status !== true)
+            {
+                showAlert('danger', content);
+            }
+            return status;
+        }
+
+        /**
+         * Launch ajax request recursively on each elements in the list
+         * @param action
+         * @param elements
+         * @param counter
+         * @param progress
+         */
+        function bulkAction(action, elements, counter, progress)
+        {
+            if(counter >= elements.length)
+            {
+                location.reload();
+                return;
+            }
+            let element = elements.get(counter);
+            let url = $(element).data('bulk-action-'+action);
+            $.ajax(url, {
+                async: true,
+                method: 'GET',
+                cache: false
+            }).done(function(response){
+                handleAjaxResponse(response);
+                counter++;
+                progress = (counter/elements.length)*100;
+                $('#bulk_action_progress .progress-bar').css('width', progress+'%').attr('aria-valuenow', counter);
+                return bulkAction(action, elements, counter, progress);
+            });
+        }
+    </script>
+    {% include 'flash.html.twig' %}
+{% endblock %}
+</body>
 </html>

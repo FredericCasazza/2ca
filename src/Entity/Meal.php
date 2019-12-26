@@ -29,6 +29,16 @@ class Meal
     private $published = false;
 
     /**
+     * @ORM\Column(type="datetime", nullable=false)
+     */
+    private $creationDate;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=false)
+     */
+    private $modificationDate;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Period")
      * @ORM\JoinColumn(name="period_id", referencedColumnName="id")
      */
@@ -99,6 +109,42 @@ class Meal
     public function setPublished(bool $published): Meal
     {
         $this->published = $published;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreationDate()
+    {
+        return $this->creationDate;
+    }
+
+    /**
+     * @param mixed $creationDate
+     * @return Meal
+     */
+    public function setCreationDate($creationDate)
+    {
+        $this->creationDate = $creationDate;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getModificationDate()
+    {
+        return $this->modificationDate;
+    }
+
+    /**
+     * @param mixed $modificationDate
+     * @return Meal
+     */
+    public function setModificationDate($modificationDate)
+    {
+        $this->modificationDate = $modificationDate;
         return $this;
     }
 

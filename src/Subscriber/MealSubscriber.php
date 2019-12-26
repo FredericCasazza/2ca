@@ -4,10 +4,13 @@
 namespace App\Subscriber;
 
 
+use App\Event\Dish\CreateDishEvent;
+use App\Event\Dish\RemoveDishEvent;
 use App\Event\Meal\CreateMealEvent;
 use App\Event\Meal\PublishMealEvent;
 use App\Event\Meal\UnpublishMealEvent;
 use App\Event\Meal\UpdateMealEvent;
+use App\Manager\MealManager;
 use App\Repository\MealRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -25,12 +28,19 @@ class MealSubscriber implements EventSubscriberInterface
     private $mealRepository;
 
     /**
+     * @var MealManager
+     */
+    private $mealManager;
+
+    /**
      * MealSubscriber constructor.
      * @param MealRepository $mealRepository
+     * @param MealManager $mealManager
      */
-    public function __construct(MealRepository $mealRepository)
+    public function __construct(MealRepository $mealRepository, MealManager $mealManager)
     {
         $this->mealRepository = $mealRepository;
+        $this->mealManager = $mealManager;
     }
 
     /**
@@ -51,6 +61,12 @@ class MealSubscriber implements EventSubscriberInterface
             UnpublishMealEvent::class => [
                 ['unpublish', 20]
             ],
+            CreateDishEvent::class => [
+                ['addDish', 15]
+            ],
+            RemoveDishEvent::class => [
+                ['removeDish', 15]
+            ]
         ];
     }
 
@@ -96,5 +112,27 @@ class MealSubscriber implements EventSubscriberInterface
     {
         $meal = $event->getMeal();
         $this->mealRepository->update($meal);
+    }
+
+    /**
+     * @param CreateDishEvent $event
+     * @throws \Exception
+     */
+    public function addDish(CreateDishEvent $event)
+    {
+        $dish = $event->getDish();
+        $meal = $dish->getMeal();
+        $this->mealManager->update($meal);
+    }
+
+    /**
+     * @param RemoveDishEvent $event
+     * @throws \Exception
+     */
+    public function removeDish(RemoveDishEvent $event)
+    {
+        $dish = $event->getDish();
+        $meal = $dish->getMeal();
+        $this->mealManager->update($meal);
     }
 }

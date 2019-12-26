@@ -8,14 +8,15 @@ use App\Constant\NotificationType;
 use App\Constant\Role;
 use App\Entity\Notification;
 use App\Event\Notification\CreateNotificationEvent;
+use App\Event\Notification\RemoveNotificationEvent;
+use App\Event\Notification\UpdateNotificationEvent;
 use App\Event\User\CreateUserEvent;
-use App\Event\User\UpdateUserEvent;
 use App\Manager\NotificationManager;
 use App\Repository\NotificationRepository;
-use App\Repository\UserRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Class NotificationSubscriber
@@ -34,14 +35,20 @@ class NotificationSubscriber implements EventSubscriberInterface
     private $notificationManager;
 
     /**
+     * @var RouterInterface
+     */
+    private $router;
+
+    /**
      * NotificationSubscriber constructor.
      * @param NotificationRepository $notificationRepository
      * @param NotificationManager $notificationManager
      */
-    public function __construct(NotificationRepository $notificationRepository, NotificationManager $notificationManager)
+    public function __construct(NotificationRepository $notificationRepository, NotificationManager $notificationManager, RouterInterface $router)
     {
         $this->notificationRepository = $notificationRepository;
         $this->notificationManager = $notificationManager;
+        $this->router = $router;
     }
 
     /**
@@ -52,6 +59,12 @@ class NotificationSubscriber implements EventSubscriberInterface
         return [
             CreateNotificationEvent::class => [
                 ['create', 20]
+            ],
+            UpdateNotificationEvent::class => [
+                ['update', 20]
+            ],
+            RemoveNotificationEvent::class => [
+                ['remove', 20]
             ],
             CreateUserEvent::class => [
                 ['newRegistration', 10]
@@ -71,7 +84,30 @@ class NotificationSubscriber implements EventSubscriberInterface
     }
 
     /**
+     * @param UpdateNotificationEvent $event
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function update(UpdateNotificationEvent $event)
+    {
+        $notification = $event->getNotification();
+        $this->notificationRepository->update($notification);
+    }
+
+    /**
+     * @param RemoveNotificationEvent $event
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function remove(RemoveNotificationEvent $event)
+    {
+        $notification = $event->getNotification();
+        $this->notificationRepository->remove($notification);
+    }
+
+    /**
      * @param CreateUserEvent $event
+     * @throws \Exception
      */
     public function newRegistration(CreateUserEvent $event)
     {
@@ -79,7 +115,9 @@ class NotificationSubscriber implements EventSubscriberInterface
         $notification = new Notification();
         $notification->setRole(Role::ROLE_ADMIN)
             ->setType(NotificationType::NEW_REGISTRATION)
-            ->setMessage("Nouvel utilisateur: {$user->getFirstname()} {$user->getLastname()} s'est inscrit !");
+            ->setMessage("Nouvel utilisateur: {$user->getFirstname()} {$user->getLastname()} s'est inscrit !")
+            ->setAction("Voir l'utilisateur")
+            ->setUrl($this->router->generate('admin_user_edit', ['id' => $user->getId()]));
         $this->notificationManager->create($notification);
     }
 

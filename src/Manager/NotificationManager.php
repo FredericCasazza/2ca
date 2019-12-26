@@ -6,6 +6,7 @@ namespace App\Manager;
 use App\Entity\Notification;
 use App\Entity\User;
 use App\Event\Notification\CreateNotificationEvent;
+use App\Event\Notification\RemoveNotificationEvent;
 use App\Event\Notification\UpdateNotificationEvent;
 use App\Repository\ConfigurationRepository;
 use App\Repository\NotificationRepository;
@@ -49,9 +50,29 @@ class NotificationManager extends AbstractManager
      * @param User $user
      * @return mixed
      */
-    public function findByUser(User $user)
+    public function findUncheckedByUser(User $user)
     {
-        return $this->notificationRepository->findByUserOrRoles($user->getId(), $user->getRoles());
+        return $this->notificationRepository->findUncheckedByUserOrRoles($user->getId(), $user->getRoles());
+    }
+
+    /**
+     * @param User $user
+     * @param $page
+     * @param $limit
+     * @return mixed
+     */
+    public function paginateByUser(User $user, $page, $limit)
+    {
+        return $this->notificationRepository->paginateByUserOrRoles($user->getId(), $user->getRoles(), $page, $limit);
+    }
+
+    /**
+     * @param Notification $notification
+     */
+    public function check(Notification $notification)
+    {
+        $notification->setChecked(true);
+        $this->update($notification);
     }
 
     /**
@@ -71,6 +92,15 @@ class NotificationManager extends AbstractManager
     public function update(Notification $notification)
     {
         $event = new UpdateNotificationEvent($notification);
+        $this->eventDispatcher->dispatch($event);
+    }
+
+    /**
+     * @param Notification $notification
+     */
+    public function remove(Notification $notification)
+    {
+        $event = new RemoveNotificationEvent($notification);
         $this->eventDispatcher->dispatch($event);
     }
 }

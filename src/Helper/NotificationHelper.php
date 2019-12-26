@@ -56,7 +56,7 @@ class NotificationHelper
             return;
         }
 
-        $this->notifications = $this->notificationManager->findByUser($user);
+        $this->notifications = $this->notificationManager->findUncheckedByUser($user);
     }
 
     /**

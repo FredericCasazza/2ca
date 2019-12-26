@@ -65,6 +65,22 @@ html, body {
 
 
 /*
+  Notifications
+ */
+
+table tr.notification {
+
+}
+
+table tr.notification:hover {
+
+}
+
+table tr.notification-checked {
+  font-weight: normal;
+}
+
+/*
   Buttons
  */
 
@@ -88,13 +104,23 @@ html, body {
 /*
   Loader
  */
-.ajax_loader {
+
+.container-loader
+{
   position: absolute;
-  z-index: 2000;
-  background: $light;
-  box-shadow: 1px 1px 8px #bbb;
   right: 0;
+  height: 100%;
+  text-align: right;
+}
+
+.loader {
+  z-index: 2000;
+  background: #eee;
+  box-shadow: 1px 1px 8px #bbb;
   padding: 2px;
+  position: sticky;
+  top: 0;
+  right: 0;
   display: none;
 }
 
@@ -108,7 +134,7 @@ html, body {
 
 .navbar-top .nav-link,
 .navbar-top .dropdown-item {
-  color: $primary !important;
+  color: $white !important;
   transition: background 1s, color 1s, transform 1s;
 }
 
@@ -118,12 +144,11 @@ html, body {
   background: $primary !important;
 }
 
-.navbar-top .user-dropdown {
-  color: $primary !important;
+.user-dropdown {
   font-weight: 500;
 }
 
-.navbar-top .user-dropdown:hover {
+.navbar-top .dropdown:hover {
   background: inherit !important;
 }
 
@@ -360,3 +385,4 @@ html, body {
 .custom-switch .custom-control-label:after {
   cursor: pointer;
 }
+

@@ -77,18 +77,24 @@ class MealManager extends AbstractManager
 
     /**
      * @param Meal $meal
+     * @throws \Exception
      */
     public function create(Meal $meal)
     {
+        $currentDate = new \DateTime();
+        $meal->setCreationDate($currentDate)
+            ->setModificationDate($currentDate);
         $event = new CreateMealEvent($meal);
         $this->eventDispatcher->dispatch($event);
     }
 
     /**
      * @param Meal $meal
+     * @throws \Exception
      */
     public function update(Meal $meal)
     {
+        $meal->setModificationDate(new \DateTime());
         $event = new UpdateMealEvent($meal);
         $this->eventDispatcher->dispatch($event);
     }

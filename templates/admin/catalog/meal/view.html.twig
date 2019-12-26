@@ -12,13 +12,13 @@
                 <div class="d-flex justify-content-end">
                     <button type="button" id="add_dish" class="modal-action btn btn-primary mr-2"
                             data-action-title="Ajouter un plat"
-                            data-action-url="{{ path('admin_meal_add_dish', {'id': meal.id}) }}"
+                            data-action-url="{{ path('admin_meal_dish_ajax_add', {'id': meal.id}) }}"
                     >
                         Ajouter un plat
                     </button>
                     <button type="button" id="edit_meal" class="modal-action btn btn-outline-primary"
                             data-action-title="Modifier le menu"
-                            data-action-url="{{ path('admin_meal_edit', {'id': meal.id}) }}"
+                            data-action-url="{{ path('admin_meal_ajax_edit', {'id': meal.id}) }}"
                     >
                         Modifier
                     </button>
@@ -30,6 +30,13 @@
     <div class="container-fluid ">
         <div class="card">
             <div class="card-body">
+                {% if not meal.published %}
+
+                    <div class="callout callout-warning">
+                        <h5><i class="icon fas fa-exclamation-triangle mr-2"></i>Menu non publié</h5>
+                        <p>Pensez à publier le menu une fois que vous aurez terminé d'y ajouter tous vos plats.</p>
+                    </div>
+                {% endif %}
                 <div class="row">
                     <div class="col-md-4">
                         <ul class="list-group">
@@ -52,7 +59,7 @@
                                                 {{ dish.label }}
                                                 <a href="#" class="modal-action"
                                                    data-action-title="Supprimer un plat"
-                                                   data-action-url="{{ path('admin_dish_remove', {'id': dish.id}) }}"
+                                                   data-action-url="{{ path('admin_dish_ajax_remove', {'id': dish.id}) }}"
                                                 >
                                                     <i class="far fa-trash-alt text-danger"></i>
                                                 </a>

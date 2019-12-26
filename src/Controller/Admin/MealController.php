@@ -70,28 +70,34 @@ class MealController extends AbstractController
     }
 
     /**
-     * @Route("/admin/meal/{id}/publish", name="admin_meal_publish")
+     * @Route("/admin/meal/{id}/ajax_publish", name="admin_meal_ajax_publish")
      * @param $id
      * @param MealManager $mealManager
      * @return Response
      * @throws \Exception
      */
-    public function publish($id, MealManager $mealManager)
+    public function ajaxPublish($id, MealManager $mealManager)
     {
         $meal = $mealManager->find($id);
 
         if(!$meal instanceof Meal)
         {
-            throw new \Exception("Le menu {$id} n'existe pas");
+            return $this->json([
+                'status' => false,
+                'content' => "Le menu {$id} n'existe pas"
+            ]);
         }
 
         $mealManager->publish($meal);
 
-        return $this->json(true);
+        return $this->json([
+            'status' => true,
+            'content' => null,
+        ]);
     }
 
     /**
-     * @Route("/admin/meal/{id}/unpublish", name="admin_meal_unpublish")
+     * @Route("/admin/meal/{id}/ajax_unpublish", name="admin_meal_ajax_unpublish")
      * @param $id
      * @param MealManager $mealManager
      * @return Response
@@ -103,21 +109,27 @@ class MealController extends AbstractController
 
         if(!$meal instanceof Meal)
         {
-            throw new \Exception("Le menu {$id} n'existe pas");
+            return $this->json([
+                'status' => false,
+                'content' => "Le menu {$id} n'existe pas"
+            ]);
         }
 
         $mealManager->unpublish($meal);
 
-        return $this->json(true);
+        return $this->json([
+            'status' => true,
+            'content' => null,
+        ]);
     }
 
     /**
-     * @Route("/admin/meal/create", name="admin_meal_create")
+     * @Route("/admin/meal/ajax_create", name="admin_meal_ajax_create")
      * @param Request $request
      * @param MealManager $mealManager
      * @return Response
      */
-    public function create(Request $request, MealManager $mealManager)
+    public function ajaxCreate(Request $request, MealManager $mealManager)
     {
         $meal = new Meal();
         $form = $this->createForm(MealType::class, $meal);
@@ -128,30 +140,42 @@ class MealController extends AbstractController
             $meal = $form->getData();
             $mealManager->create($meal);
 
-            return $this->json(true);
+            return $this->json([
+                'status' => true,
+                'content' => null,
+            ]);
 
         }
 
-        return $this->render('admin/catalog/meal/create.html.twig', [
+        $render = $this->get('twig')->render('admin/catalog/meal/create.html.twig', [
             'form' => $form->createView()
         ]);
+
+        return $this->json([
+            'status' => true,
+            'content' => $render,
+        ]);
+
     }
 
     /**
-     * @Route("/admin/meal/{id}/edit", name="admin_meal_edit")
+     * @Route("/admin/meal/{id}/ajax_edit", name="admin_meal_ajax_edit")
      * @param $id
      * @param Request $request
      * @param MealManager $mealManager
      * @return Response
      * @throws \Exception
      */
-    public function edit($id, Request $request, MealManager $mealManager)
+    public function ajaxEdit($id, Request $request, MealManager $mealManager)
     {
         $meal = $mealManager->find($id);
 
         if(!$meal instanceof Meal)
         {
-            throw new \Exception("Le menu {$id} n'existe pas");
+            return $this->json([
+                'status' => false,
+                'content' => "Le menu {$id} n'existe pas"
+            ]);
         }
 
         $form = $this->createForm(MealType::class, $meal);
@@ -162,16 +186,24 @@ class MealController extends AbstractController
             $meal = $form->getData();
             $mealManager->update($meal);
 
-            return $this->json(true);
+            return $this->json([
+                'status' => true,
+                'content' => null,
+            ]);
         }
 
-        return $this->render('admin/catalog/meal/edit.html.twig', [
+        $render = $this->get('twig')->render('admin/catalog/meal/edit.html.twig', [
             'form' => $form->createView()
+        ]);
+
+        return $this->json([
+            'status' => true,
+            'content' => $render,
         ]);
     }
 
     /**
-     * @Route("/admin/meal/{id}/dish/add", name="admin_meal_add_dish")
+     * @Route("/admin/meal/{id}/dish/ajax_add", name="admin_meal_dish_ajax_add")
      * @param $id
      * @param Request $request
      * @param MealManager $mealManager
@@ -185,7 +217,10 @@ class MealController extends AbstractController
 
         if(!$meal instanceof Meal)
         {
-            throw new \Exception("Le menu {$id} n'existe pas");
+            return $this->json([
+                'status' => false,
+                'content' => "Le menu {$id} n'existe pas"
+            ]);
         }
 
         $dish = new Dish();
@@ -200,11 +235,19 @@ class MealController extends AbstractController
             $dish = $form->getData();
             $dishManager->create($dish);
 
-            return $this->json(true);
+            return $this->json([
+                'status' => true,
+                'content' => null,
+            ]);
         }
 
-        return $this->render('admin/catalog/meal/add_dish.html.twig', [
+        $render = $this->get('twig')->render('admin/catalog/meal/add_dish.html.twig', [
             'form' => $form->createView()
+        ]);
+
+        return $this->json([
+            'status' => true,
+            'content' => $render,
         ]);
     }
 
