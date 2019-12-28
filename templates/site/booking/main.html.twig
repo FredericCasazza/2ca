@@ -1,0 +1,107 @@
+{% extends 'site/layout.html.twig' %}
+
+{% block main %}
+    <div class="container-fluid" style="padding-top: 60px">
+        <div class="meal-carousel">
+            <div class="meal-carousel-items">
+                {% for date in dates %}
+                    <div class="meal-carousel-item text-center {% if loop.first %} active {% endif %}">
+                        <h6>{{ date|localdate('LLLL')|capitalize }}</h6>
+                        <h3>{{ date|date('d') }}</h3>
+                        <h6>{{ date|date('Y') }}</h6>
+                    </div>
+                {% endfor %}
+            </div>
+            <button class="meal-carousel-prev btn btn-link">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="meal-carousel-next btn btn-link">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        <div id="meals">
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        /**
+         * calculates the maximum position to which the carousel can translate to the left
+         * @returns {number}
+         */
+        function getTranslationMax()
+        {
+            let carousel_items_width = $('.meal-carousel-items').width();
+            let translation_max = (carousel_items_width - ($(document).width()-100)) * -1;
+            if(translation_max > 0)
+            {
+                translation_max = 0;
+            }
+            return translation_max;
+        }
+
+        /**
+         * Show/hide the carousel's buttons according to the size of the carousel compared to the size of the window
+         */
+        function toggleCarouselButton()
+        {
+            if(getTranslationMax() < 0)
+            {
+                $('.meal-carousel').removeClass('justify-content-center');
+                $('.meal-carousel-prev').show();
+                $('.meal-carousel-next').show();
+            }else{
+                $('.meal-carousel').addClass('justify-content-center');
+                $('.meal-carousel-prev').hide();
+                $('.meal-carousel-next').hide();
+            }
+        }
+
+        $(document).ready(function () {
+            /**
+             * Init carousel values
+             */
+            let translation = 0;
+            toggleCarouselButton();
+
+            /**
+             * Show/hide the carousel's buttons when resizing th window
+             */
+            $(window).resize(function () {
+                toggleCarouselButton();
+            });
+
+            /**
+             * Translate the carousel to the left
+             */
+            $('.meal-carousel-prev').click(function () {
+                translation+= $(window).width()/2;
+                if(translation > 0) {
+                    translation = 0;
+                }
+                $('.meal-carousel-items').css('transform', 'translateX(' + translation + 'px)');
+            });
+
+            /**
+             * Translate the carousel to the right
+             */
+            $('.meal-carousel-next').click(function () {
+                let translation_max = getTranslationMax();
+                translation-= $(window).width()/2;
+                if(translation < translation_max) {
+                    translation = translation_max;
+                }
+                $('.meal-carousel-items').css('transform', 'translateX(' + translation + 'px)');
+            });
+
+            $('.meal-carousel-item:not(.active)').click(function () {
+                $('.meal-carousel-item.active').removeClass('active');
+                $(this).addClass('active');
+            });
+
+        });
+    </script>
+{% endblock %}

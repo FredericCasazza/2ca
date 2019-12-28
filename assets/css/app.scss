@@ -386,3 +386,89 @@ table tr.notification-checked {
   cursor: pointer;
 }
 
+/*
+  Carousel
+ */
+
+.meal-carousel {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.meal-carousel-items {
+  display: inline-flex;
+  transition-duration: 1s;
+  margin: 0 45px;
+  padding: 5px 0;
+}
+
+.meal-carousel-item {
+  min-width: 90px;
+  min-height: 80px;
+  border: solid 1px $primary;
+  margin-left: 2px;
+  margin-right: 2px;
+  padding: 2px;
+  background: $white;
+  color: $primary;
+  cursor: pointer;
+  border-radius: 5px;
+  transition-duration: 0.2s;
+}
+
+.meal-carousel-item:not(.active):hover {
+  transform: scale(1.1);
+}
+
+.meal-carousel-item.active {
+  background: $primary;
+  color: $white;
+  box-shadow: 1px 1px 8px $dark;
+  opacity: 0.9;
+  cursor: default;
+}
+
+
+.meal-carousel-prev {
+  width: 40px;
+  position: absolute;
+  left: 0;
+  background: $primary;
+  color: white;
+  opacity: 0.7;
+  display: none;
+}
+
+.meal-carousel-next {
+  width: 40px;
+  position: absolute;
+  right: 0;
+  background: $primary;
+  color: white;
+  opacity: 0.7;
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .meal-carousel {
+
+    h3, h6 {
+      margin-bottom: 0.2rem;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+    }
+
+    h6 {
+      font-size: 0.9rem;
+    }
+
+    .meal-carousel-item {
+      min-width: 80px;
+      min-height: 70px;
+    }
+  }
+}

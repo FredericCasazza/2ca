@@ -56,6 +56,15 @@ class MealManager extends AbstractManager
     }
 
     /**
+     * @param $date
+     * @return mixed
+     */
+    public function findBookableByDate($date)
+    {
+        return $this->mealRepository->findBookableByDate($date);
+    }
+
+    /**
      * @param Meal $meal
      */
     public function publish(Meal $meal)

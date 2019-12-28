@@ -128,6 +128,7 @@ class MealController extends AbstractController
      * @param Request $request
      * @param MealManager $mealManager
      * @return Response
+     * @throws \Exception
      */
     public function ajaxCreate(Request $request, MealManager $mealManager)
     {

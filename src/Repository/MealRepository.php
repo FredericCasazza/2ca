@@ -9,6 +9,7 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use function Doctrine\ORM\QueryBuilder;
 
 /**
  * @method Meal|null find($id, $lockMode = null, $lockVersion = null)
@@ -48,6 +49,21 @@ class MealRepository extends ServiceEntityRepository
         $qb->addOrderBy('m.date', 'desc');
 
         return $this->paginator->paginate($qb, $page, $limit);
+    }
+
+    /**
+     * @param $date
+     * @return mixed
+     */
+    public function findBookableByDate($date)
+    {
+        $qb = $this->createQueryBuilder('m');
+        $qb->andWhere($qb->expr()->eq('m.published', true))
+            ->andWhere($qb->expr()->gte('m.date', ':date'))
+            ->addOrderBy('m.date', 'asc')
+            ->setParameter('date', $date);
+
+        return $qb->getQuery()->execute();
     }
 
     /**
