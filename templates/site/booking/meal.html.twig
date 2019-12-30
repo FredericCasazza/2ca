@@ -1,0 +1,107 @@
+{% extends 'site/layout.html.twig' %}
+
+{% block main %}
+    <section class="section-booking-meal">
+        <div class="container-top">
+            <h4>
+                <a href="{{ path('booking', {'selectedDate': meal.date|date('Y-m-d')}) }}">
+                    <i class="fas fa-arrow-circle-left text-primary"></i>
+                </a>
+                Menu du {{ meal.date|localdate('full')|capitalize }} {{ meal.period.label }}
+            </h4>
+        </div>
+        <div class="container">
+            <div class="callout callout-warning">
+                <i class="fas fa-exclamation-triangle text-warning"></i>
+                Une fois que vous aurez terminé de sélectionner tous vos plats, pensez à cliquer sur "Voir la réservation" afin de valider celle-ci.
+            </div>
+        {% for dishCategory in dishesCategories %}
+                <h4>{{ dishCategory.label }}</h4>
+            {% for dish in dishesByCategory[dishCategory.id] %}
+                <div class="dish">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input select-dish" id="select_dish_{{ dish.id }}"
+                               data-action-add-dish="{{ path('booking_dish_ajax_add', {'id': dish.id}) }}"
+                               data-action-remove-dish="{{ path('booking_dish_ajax_remove', {'id': dish.id}) }}"
+                               {% if order.getDishes().contains(dish) %} checked="checked" {% endif %}
+                        >
+                        <label class="custom-control-label" for="select_dish_{{ dish.id }}">{{ dish.label }}</label>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        </div>
+        <div class="container-bottom">
+            <a href="{{ path('booking_order_view', {'id': order.id}) }}" class="btn btn-primary">Voir la réservation</a>
+        </div>
+    </section>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        /**
+         *
+         */
+        function setContainerPaddingTop()
+        {
+            $('.section-booking-meal .container')
+                .css('padding-top', $('.section-booking-meal .container-top').outerHeight()+15)
+                .css('padding-bottom', $('.section-booking-meal .container-bottom').outerHeight()+15);
+        }
+
+        /**
+         *
+         * @param $dish
+         */
+        function setDishBorderActive($dish){
+            $dish.closest('.dish').addClass('border-primary');
+        }
+
+        /**
+         *
+         * @param $dish
+         */
+        function setDishBorderInactive($dish){
+            $dish.closest('.dish').removeClass('border-primary');
+        }
+
+        $(document).ready(function () {
+
+            setContainerPaddingTop();
+            setDishBorderActive($('.select-dish:checked'));
+
+            $(window).resize(function () {
+                setContainerPaddingTop();
+            });
+
+            $('.select-dish').change(function () {
+                let $checkbox = $(this);
+                if($checkbox.prop('checked')){
+                    let url = $checkbox.data('action-add-dish');
+                    $.get(url).done(function(response){
+                        if(handleAjaxResponse(response)){
+                            setDishBorderActive($checkbox);
+                        }else{
+                            $checkbox.prop('checked', false);
+                        }
+                    }).fail(function(){
+                        $checkbox.prop('checked', false);
+                    });
+                }else{
+                    let url = $checkbox.data('action-remove-dish');
+                    $.get(url).done(function(response){
+                        if(handleAjaxResponse(response)){
+                            setDishBorderInactive($checkbox);
+                        }else{
+                            $checkbox.prop('checked', true);
+                        }
+                    }).fail(function(){
+                        $checkbox.prop('checked', true);
+                    });
+                }
+            });
+
+        });
+    </script>
+{% endblock %}

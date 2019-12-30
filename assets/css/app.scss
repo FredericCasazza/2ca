@@ -24,6 +24,10 @@ html, body {
   box-shadow: 1px 1px 2px #dee2e6;
 }
 
+.custom-checkbox label {
+  cursor: pointer;
+}
+
 @media (max-width: 576px) {
   .flash {
     width: 250px;
@@ -98,6 +102,21 @@ table tr.notification-checked {
 
 .dropdown-actions .dropdown-item:hover {
   background: $primary;
+  color: $white;
+}
+
+.btn-outline-primary:hover {
+  color: $white;
+}
+
+.btn-outline-primary.active {
+  color: $white !important;
+}
+
+/*
+  Badge
+ */
+.badge-primary {
   color: $white;
 }
 
@@ -362,6 +381,62 @@ table tr.notification-checked {
   margin-top: 30px;
 }
 
+/*
+  Section Booking Meal
+ */
+
+.section-booking-meal .container-top {
+  padding: 75px 15px 15px;
+  border-bottom: solid 1px #efefef;
+  position: fixed;
+  background: white;
+  width: 100%;
+  top: 0;
+  z-index: 900;
+  opacity: 0.95;
+  box-shadow: 1px 1px 8px grey;
+}
+
+.section-booking-meal .container-bottom {
+  border-top: solid 1px #efefef;
+  position: fixed;
+  bottom: 0;
+  padding: 15px;
+  width: 100%;
+  z-index: 900;
+  background: white;
+  opacity: 0.9;
+  text-align: right;
+  box-shadow: 1px 1px 8px grey;
+}
+
+@media (max-width: 576px) {
+  .section-booking-meal h4 {
+    font-size: 1.25rem;
+  }
+}
+
+.section-booking-meal .container {
+  padding-top: 140px;
+  padding-bottom: 80px;
+}
+
+.section-booking-meal .dish-category {
+  padding: 15px;
+  background: $dark;
+  color: $white;
+  border: solid 1px $dark;
+  margin-bottom: 10px;
+}
+
+.section-booking-meal .dish {
+  padding: 15px;
+  background: $white;
+  border: solid 1px $light;
+  margin-bottom: 10px;
+  box-shadow: 1px 1px 8px grey;
+}
+
 
 /*
   Paginator
@@ -387,6 +462,37 @@ table tr.notification-checked {
 }
 
 /*
+  Booking
+ */
+
+#meals_booking {
+  text-align: center;
+  margin-top: 130px;
+}
+
+@media (max-width: 992px) {
+  #meals_booking {
+    margin-top: 100px;
+  }
+}
+
+#meals_booking_content {
+  text-align: center;
+}
+
+#meals_booking nav {
+  display: inline-block;
+}
+
+#meal_nav_content {
+  margin-top: 20px;
+}
+
+#meal_nav_tab a {
+  min-width: 100px;
+}
+
+/*
   Carousel
  */
 
@@ -395,6 +501,9 @@ table tr.notification-checked {
   overflow: hidden;
   display: flex;
   align-items: center;
+  position: fixed;
+  z-index: 900;
+  background: white;
 }
 
 .meal-carousel-items {

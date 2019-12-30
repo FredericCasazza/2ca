@@ -27,6 +27,11 @@ class DishCategory
     private $position = 1;
 
     /**
+     * @ORM\Column(type="integer", nullable=false)
+     */
+    private $limit = 1;
+
+    /**
      * @ORM\Column(type="boolean", nullable=false)
      */
     private $enable = true;
@@ -74,6 +79,24 @@ class DishCategory
     {
         $this->position = $position;
 
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit(): int
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @param int $limit
+     * @return DishCategory
+     */
+    public function setLimit(int $limit): DishCategory
+    {
+        $this->limit = $limit;
         return $this;
     }
 

@@ -58,9 +58,11 @@ class MealRepository extends ServiceEntityRepository
     public function findBookableByDate($date)
     {
         $qb = $this->createQueryBuilder('m');
-        $qb->andWhere($qb->expr()->eq('m.published', true))
-            ->andWhere($qb->expr()->gte('m.date', ':date'))
+        $qb->join('m.period', 'p')
+            ->andWhere($qb->expr()->eq('m.published', true))
+            ->andWhere($qb->expr()->eq('m.date', ':date'))
             ->addOrderBy('m.date', 'asc')
+            ->addOrderBy('p.position', 'asc')
             ->setParameter('date', $date);
 
         return $qb->getQuery()->execute();

@@ -4,12 +4,14 @@
     <div class="container-fluid" style="padding-top: 60px">
         <div class="meal-carousel">
             <div class="meal-carousel-items">
-                {% for date in dates %}
-                    <div class="meal-carousel-item text-center {% if loop.first %} active {% endif %}">
-                        <h6>{{ date|localdate('LLLL')|capitalize }}</h6>
-                        <h3>{{ date|date('d') }}</h3>
-                        <h6>{{ date|date('Y') }}</h6>
-                    </div>
+                {% for formattedDate,date in dates %}
+                    <a href="{{ path('booking', {'selectedDate': formattedDate}) }}">
+                        <div class="meal-carousel-item text-center {% if selectedDate == formattedDate %} active {% endif %}">
+                            <h6>{{ date|localdate('LLLL')|capitalize }}</h6>
+                            <h3>{{ date|date('d') }}</h3>
+                            <h6>{{ date|date('Y') }}</h6>
+                        </div>
+                    </a>
                 {% endfor %}
             </div>
             <button class="meal-carousel-prev btn btn-link">
@@ -19,9 +21,35 @@
                 <i class="fas fa-chevron-right"></i>
             </button>
         </div>
-        <div id="meals">
+        <section id="meals_booking">
+            {% if meals is empty %}
+                <h5 class="text-muted font-italic text-center">Il n'y a aucun menu disponible à la réservation pour cette date</h5>
+            {% else %}
+                <nav>
+                    <div class="nav btn-group" id="meal_nav_tab" role="tablist" >
+                        {% for meal in meals %}
+                            <a class="btn btn-outline-primary {% if loop.first %} active {% endif %}"
+                               id="meal_{{ meal.id }}_button" data-toggle="tab" href="#meal_{{ meal.id }}" role="tab" aria-controls="meal_{{ meal.id }}" aria-selected="true"
+                            >
+                                {{ meal.period.label }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </nav>
+                <div class="tab-content" id="meal_nav_content">
+                    {% for meal in meals %}
+                        <div class="tab-pane fade show {% if loop.first %} active {% endif %}" id="meal_{{ meal.id }}" role="tabpanel" aria-labelledby="meal_{{ meal.id }}_button">
+                            {% if orders[meal.id] is defined and orders[meal.id].getDishes is not empty %}
 
-        </div>
+                            {% else %}
+                                <h5 class="text-muted">Vous n'avez pas encore fait de réservation</h5>
+                            {% endif %}
+                            <a href="{{ path('booking_meal', {'id': meal.id}) }}" class="btn btn-lg btn-primary mt-4">Réserver votre repas</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
     </div>
 {% endblock %}
 
@@ -65,13 +93,26 @@
              * Init carousel values
              */
             let translation = 0;
+            let $item_active = $('.meal-carousel-item.active');
+            if($item_active)
+            {
+                translation = $('.meal-carousel').outerWidth()/2 - ($item_active.position().left + $item_active.outerWidth()/2);
+                if(translation > 0){
+                    translation = 0;
+                }else if(translation < getTranslationMax()){
+                    translation = getTranslationMax();
+                }
+                $('.meal-carousel-items').css('transform', 'translateX(' + translation + 'px)');
+            }
             toggleCarouselButton();
+
 
             /**
              * Show/hide the carousel's buttons when resizing th window
              */
             $(window).resize(function () {
                 toggleCarouselButton();
+                $('.meal-carousel-items').css('transform', 'translateX(0px)');
             });
 
             /**
@@ -95,11 +136,6 @@
                     translation = translation_max;
                 }
                 $('.meal-carousel-items').css('transform', 'translateX(' + translation + 'px)');
-            });
-
-            $('.meal-carousel-item:not(.active)').click(function () {
-                $('.meal-carousel-item.active').removeClass('active');
-                $(this).addClass('active');
             });
 
         });

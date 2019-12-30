@@ -71,6 +71,12 @@ class User implements UserInterface
     private $plainTextPassword;
 
     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Establishment")
+     * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
+     */
+    private $establishment;
+
+    /**
      * @return int|null
      */
     public function getId(): ?int
@@ -215,6 +221,23 @@ class User implements UserInterface
         return $this;
     }
 
+    /**
+     * @return Establishment|null
+     */
+    public function getEstablishment(): ?Establishment
+    {
+        return $this->establishment;
+    }
+
+    /**
+     * @param Establishment $establishment
+     * @return User
+     */
+    public function setEstablishment(Establishment $establishment)
+    {
+        $this->establishment = $establishment;
+        return $this;
+    }
 
 
     /**

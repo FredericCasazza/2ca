@@ -59,12 +59,18 @@ class Meal
     private $dishes;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Order", mappedBy="meal", orphanRemoval=true)
+     */
+    private $orders;
+
+    /**
      * Meal constructor.
      */
     public function __construct()
     {
         $this->establishments = new ArrayCollection();
         $this->dishes = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     /**
@@ -193,7 +199,7 @@ class Meal
     {
         if(!$this->establishments->contains($establishment))
         {
-            $this->establishments->add($establishment);
+            $this->establishments[] = $establishment;
         }
 
         return $this;
@@ -240,7 +246,8 @@ class Meal
     {
         if(!$this->dishes->contains($dish))
         {
-            $this->dishes->add($dish);
+            $this->dishes[] = $dish;
+            $dish->setMeal($this);
         }
 
         return $this;
@@ -252,9 +259,43 @@ class Meal
      */
     public function removeDish(Dish $dish): self
     {
-        if($this->dishes->contains($dish))
-        {
+        if ($this->dishes->contains($dish)) {
             $this->dishes->removeElement($dish);
+            // set the owning side to null (unless already changed)
+            if ($dish->getMeal() === $this) {
+                $dish->setMeal(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Order[]
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): self
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders[] = $order;
+            $order->setMeal($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): self
+    {
+        if ($this->orders->contains($order)) {
+            $this->orders->removeElement($order);
+            // set the owning side to null (unless already changed)
+            if ($order->getMeal() === $this) {
+                $order->setMeal(null);
+            }
         }
 
         return $this;

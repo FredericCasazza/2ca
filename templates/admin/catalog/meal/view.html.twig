@@ -10,6 +10,17 @@
             </div>
             <div class="col-md-6">
                 <div class="d-flex justify-content-end">
+                    <div class="custom-control custom-switch">
+                        {% set meal_published = "" %}
+                        {% if meal.published %}
+                            {% set meal_published = "checked" %}
+                        {% endif %}
+                        <input type="checkbox" class="meal-published custom-control-input" id="meal_{{ meal.id }}_published" {{ meal_published }}
+                               data-publish-url="{{ path('admin_meal_ajax_publish', {'id': meal.id}) }}"
+                               data-unpublish-url="{{ path('admin_meal_ajax_unpublish', {'id': meal.id}) }}"
+                        >
+                        <label class="custom-control-label" for="meal_{{ meal.id }}_published"></label>
+                    </div>
                     <button type="button" id="add_dish" class="modal-action btn btn-primary mr-2"
                             data-action-title="Ajouter un plat"
                             data-action-url="{{ path('admin_meal_dish_ajax_add', {'id': meal.id}) }}"
@@ -31,15 +42,15 @@
         <div class="card">
             <div class="card-body">
                 {% if not meal.published %}
-
                     <div class="callout callout-warning">
                         <h5><i class="icon fas fa-exclamation-triangle mr-2"></i>Menu non publié</h5>
                         <p>Pensez à publier le menu une fois que vous aurez terminé d'y ajouter tous vos plats.</p>
                     </div>
                 {% endif %}
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-4 mb-2">
                         <ul class="list-group">
+                            <li class="list-group-item"><h5>Etablissements</h5></li>
                             {% for establishment in meal.establishments %}
                                 <li class="list-group-item">{{ establishment.label }}</li>
                             {% endfor %}
@@ -73,4 +84,22 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('.meal-published').change(function(){
+            let url = '';
+            if($(this).is(':checked')){
+                url = $(this).data('publish-url');
+            }else{
+                url = $(this).data('unpublish-url');
+            }
+            $.get(url).done(function () {
+                location.reload();
+            });
+        });
+    </script>
 {% endblock %}

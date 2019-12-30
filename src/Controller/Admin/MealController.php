@@ -103,7 +103,7 @@ class MealController extends AbstractController
      * @return Response
      * @throws \Exception
      */
-    public function unpublish($id, MealManager $mealManager)
+    public function ajaxUnpublish($id, MealManager $mealManager)
     {
         $meal = $mealManager->find($id);
 
@@ -212,7 +212,7 @@ class MealController extends AbstractController
      * @return Response
      * @throws \Exception
      */
-    public function addDish($id, Request $request, MealManager $mealManager, DishManager $dishManager)
+    public function ajaxAddDish($id, Request $request, MealManager $mealManager, DishManager $dishManager)
     {
         $meal = $mealManager->find($id);
 

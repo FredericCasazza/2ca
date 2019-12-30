@@ -11,7 +11,7 @@
         <ul class="navbar-nav mr-auto">
             {% if is_granted('ROLE_CLIENT') %}
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ 'booking' }}">Réservation</a>
+                    <a class="nav-link" href="{{path('booking')}}">Réserver vos repas</a>
                 </li>
             {% endif %}
         </ul>
