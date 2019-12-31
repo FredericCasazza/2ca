@@ -23,6 +23,12 @@ class Configuration
     private $env;
 
     /**
+     * @var int
+     * @ORM\Column(type="integer", nullable=false)
+     */
+    private $sessionMaxIdleTime = 0;
+
+    /**
      * @var boolean
      * @ORM\Column(type="boolean")
      */
@@ -63,6 +69,24 @@ class Configuration
     public function setEnv(string $env): self
     {
         $this->env = $env;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSessionMaxIdleTime(): int
+    {
+        return $this->sessionMaxIdleTime;
+    }
+
+    /**
+     * @param int $sessionMaxIdleTime
+     * @return Configuration
+     */
+    public function setSessionMaxIdleTime(int $sessionMaxIdleTime): self
+    {
+        $this->sessionMaxIdleTime = $sessionMaxIdleTime;
         return $this;
     }
 

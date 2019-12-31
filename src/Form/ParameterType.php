@@ -7,6 +7,7 @@ namespace App\Form;
 use App\Entity\Configuration;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -24,7 +25,9 @@ class ParameterType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('recaptchaEnable', CheckboxType::class, [
+        $builder->add('sessionMaxIdleTime', IntegerType::class, [
+            'label' => "Déconnexion après temps d'inactivité en secondes",
+        ])->add('recaptchaEnable', CheckboxType::class, [
             'required' => false,
             'label' => false
         ])->add('recaptchaSiteKey', TextType::class, [
