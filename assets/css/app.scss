@@ -397,19 +397,6 @@ table tr.notification-checked {
   box-shadow: 1px 1px 8px grey;
 }
 
-.section-booking-meal .container-bottom {
-  border-top: solid 1px #efefef;
-  position: fixed;
-  bottom: 0;
-  padding: 15px;
-  width: 100%;
-  z-index: 900;
-  background: white;
-  opacity: 0.9;
-  text-align: right;
-  box-shadow: 1px 1px 8px grey;
-}
-
 @media (max-width: 576px) {
   .section-booking-meal h4 {
     font-size: 1.25rem;

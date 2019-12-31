@@ -5,6 +5,7 @@ namespace App\Controller\Site;
 
 
 use App\Entity\Dish;
+use App\Entity\Establishment;
 use App\Entity\Meal;
 use App\Entity\Order;
 use App\Entity\User;
@@ -13,6 +14,7 @@ use App\Manager\DishManager;
 use App\Manager\MealManager;
 use App\Manager\OrderManager;
 use App\Specification\Meal\IsBookableMealSpecification;
+use App\Specification\Order\CanAddThisDishToOrderSpecification;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -36,9 +38,18 @@ class BookingController extends AbstractController
      */
     public function booking($selectedDate, MealManager $mealManager, OrderManager $orderManager)
     {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if(!$user->getEstablishment() instanceof Establishment)
+        {
+            return $this->render('site/booking/no_establishment.html.twig');
+        }
+
+
         // Init
         $dates = [];
-        $current = new \DateTime('today');
+        $current = (new \DateTime('today'))->modify('+1 day');
         $selectedDate = (preg_match('/^.{4}-.{2}-.{2}/', $selectedDate) !== 1)? $current : \DateTime::createFromFormat('Y-m-d H:i:s',"{$selectedDate} 00:00:00");
         if($selectedDate >= (clone $current)->modify('+15 days'))
         {
@@ -55,10 +66,7 @@ class BookingController extends AbstractController
         }
 
         // Find meals to selectedDate
-        $meals = $mealManager->findBookableByDate($selectedDate);
-
-        /** @var User $user */
-        $user = $this->getUser();
+        $meals = $mealManager->findBookableByDateAndEstablishment($selectedDate, $user->getEstablishment());
 
         // Find user meals orders
         $orders = [];
@@ -103,7 +111,7 @@ class BookingController extends AbstractController
         $isBookableMealSpecification = new IsBookableMealSpecification();
         if(!$isBookableMealSpecification->isSatisfiedBy($meal))
         {
-            $this->addFlash('danger', "Vous ne pouvez pas faire de réservation sur ce menu");
+            $this->addFlash('danger', "Vous ne pouvez pas faire de réservation sur ce menu.");
             return $this->redirectToRoute('booking');
         }
 
@@ -163,7 +171,7 @@ class BookingController extends AbstractController
         {
             return $this->json([
                 'status' => false,
-                'content' => "Vous ne pouvez pas faire de réservation sur ce menu"
+                'content' => "Vous ne pouvez pas faire de réservation sur ce menu."
             ]);
         }
 
@@ -176,7 +184,16 @@ class BookingController extends AbstractController
         {
             return $this->json([
                 'status' => false,
-                'content' => "Il n'y a pas de réservation pour cette date"
+                'content' => "Il n'y a pas de réservation vous concernant à cette date."
+            ]);
+        }
+
+        $canAddThisDishToOrderSpecification = new CanAddThisDishToOrderSpecification($order);
+        if (!$canAddThisDishToOrderSpecification->isSatisfiedBy($dish))
+        {
+            return $this->json([
+                'status' => false,
+                'content' => "Vous avez déjà atteint la limite du nombre de plat de type \"{$dish->getCategory()->getLabel()}\" autorisée"
             ]);
         }
 
@@ -217,7 +234,7 @@ class BookingController extends AbstractController
         {
             return $this->json([
                 'status' => false,
-                'content' => "Vous ne pouvez pas faire de réservation sur ce menu"
+                'content' => "Vous ne pouvez pas faire de réservation sur ce menu."
             ]);
         }
 
@@ -230,7 +247,7 @@ class BookingController extends AbstractController
         {
             return $this->json([
                 'status' => false,
-                'content' => "Il n'y a pas de réservation pour cette date"
+                'content' => "Il n'y a pas de réservation vous concernant à cette dat."
             ]);
         }
 

@@ -1,0 +1,111 @@
+{% extends 'admin/catalog/period/layout.html.twig' %}
+
+{% block main %}
+    <div class="toolbar sticky-top">
+        <div class="d-flex justify-content-end">
+            <button type="button" class="modal-action btn btn-primary"
+                    data-action-title="Ajouter un repas"
+                    data-action-url="{{ path('homepage') }}"
+            >
+                Ajouter un repas
+            </button>
+        </div>
+    </div>
+
+    <div class="container-fluid ">
+        <div class="card table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Intitulé</th>
+                    <th scope="col">Heure service</th>
+                    <th scope="col">Position</th>
+                    <th scope="col">Actif</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for period in periods %}
+                    <tr>
+                        <th scope="row" style="width: 9%;">{{ period.id }}.</th>
+                        <td>
+                            <a href="{{ path('admin_period_edit', {'id': period.id}) }}">
+                                {{ period.label }}
+                            </a>
+                        </td>
+                        <td ></td>
+                        <td style="width: 9%;">
+                            {{ period.position }}
+                        </td>
+                        <td style="width: 9%">
+                            <div class="custom-control custom-switch">
+                                {% set period_enable = "" %}
+                                {% if period.enable %}
+                                    {% set period_enable = "checked" %}
+                                {% endif %}
+                                <input type="checkbox" class="period-enable custom-control-input" id="period_{{ period.id }}_enable" {{ period_enable }}
+                                       data-enable-url="{{ path('admin_period_ajax_enable', {'id': period.id}) }}"
+                                       data-disable-url="{{ path('admin_period_ajax_disable', {'id': period.id}) }}"
+                                >
+                                <label class="custom-control-label" for="period_{{ period.id }}_enable"></label>
+                            </div>
+                        </td>
+                        <td class="text-right" style="width: 9%;">
+                            {#
+                            <div class="dropdown dropdown-actions">
+                                <button class="btn btn-link dropdown-toggle" type="button" id="meal_{{ meal.id }}_actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="meal_{{ meal.id }}_actions">
+                                    <a class="dropdown-item" href="#">Dupliquer</a>
+                                    <a class="dropdown-item" href="#">Supprimer</a>
+                                </div>
+                            </div>
+                            #}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="navigation">
+            {{ knp_pagination_render(periods) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('.period-enable').change(function(){
+            let url = '';
+            let $checkbox = $(this);
+            if($(this).is(':checked')){
+                url = $checkbox.data('enable-url');
+                $.get(
+                    url
+                ).done(function (response) {
+                    if(!handleAjaxResponse(response))
+                    {
+                        $checkbox.prop('checked', false);
+                    }
+                }).fail(function () {
+                    $checkbox.prop('checked', false);
+                });
+            }else{
+                url = $(this).data('disable-url');
+                $.get(
+                    url
+                ).done(function (response) {
+                    if(!handleAjaxResponse(response))
+                    {
+                        $checkbox.prop('checked', false);
+                    }
+                }).fail(function () {
+                    $checkbox.prop('checked', false);
+                });
+            }
+        });
+    </script>
+{% endblock %}

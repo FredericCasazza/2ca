@@ -3,36 +3,49 @@
 {% block main %}
     <section class="section-booking-meal">
         <div class="container-top">
-            <h4>
-                <a href="{{ path('booking', {'selectedDate': meal.date|date('Y-m-d')}) }}">
-                    <i class="fas fa-arrow-circle-left text-primary"></i>
-                </a>
-                Menu du {{ meal.date|localdate('full')|capitalize }} {{ meal.period.label }}
-            </h4>
+            <div class="row">
+                <div class="col-sm-8">
+                    <h4>
+                        <a href="{{ path('booking', {'selectedDate': meal.date|date('Y-m-d')}) }}">
+                            <i class="fas fa-arrow-circle-left text-primary mr-2"></i>
+                        </a>
+                        Menu du {{ meal.date|localdate('full')|capitalize }} {{ meal.period.label }}
+                    </h4>
+                </div>
+                <div class="col-sm-4 text-right">
+                    <a id="meal_booking_finish" href="{{ path('booking_order_view', {'id': order.id}) }}" class="btn btn-primary disabled">Continuer</a>
+                </div>
+            </div>
         </div>
         <div class="container">
-            <div class="callout callout-warning">
-                <i class="fas fa-exclamation-triangle text-warning"></i>
-                Une fois que vous aurez terminé de sélectionner tous vos plats, pensez à cliquer sur "Voir la réservation" afin de valider celle-ci.
+            <div class="callout callout-warning text-warning">
+                <i class="fas fa-exclamation-triangle fa-2x mr-2"></i>
+                <strong>Une fois votre sélection terminée cliquez sur "Continuer".</strong>
             </div>
-        {% for dishCategory in dishesCategories %}
-                <h4>{{ dishCategory.label }}</h4>
-            {% for dish in dishesByCategory[dishCategory.id] %}
-                <div class="dish">
-                    <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input select-dish" id="select_dish_{{ dish.id }}"
-                               data-action-add-dish="{{ path('booking_dish_ajax_add', {'id': dish.id}) }}"
-                               data-action-remove-dish="{{ path('booking_dish_ajax_remove', {'id': dish.id}) }}"
-                               {% if order.getDishes().contains(dish) %} checked="checked" {% endif %}
-                        >
-                        <label class="custom-control-label" for="select_dish_{{ dish.id }}">{{ dish.label }}</label>
-                    </div>
-                </div>
+            {% for dishCategory in dishesCategories %}
+                {% if dishesByCategory[dishCategory.id] is not empty %}
+                    <h4>
+                        {{ dishCategory.label }}
+                        <span style="font-size: 1.2rem;">
+                        {% if dishCategory.limit > 0 %}
+                            ({{ dishCategory.limit }} maximum)
+                        {% endif %}
+                    </span>
+                    </h4>
+                    {% for dish in dishesByCategory[dishCategory.id] %}
+                        <div class="dish">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input select-dish" id="select_dish_{{ dish.id }}"
+                                       data-action-add-dish="{{ path('booking_dish_ajax_add', {'id': dish.id}) }}"
+                                       data-action-remove-dish="{{ path('booking_dish_ajax_remove', {'id': dish.id}) }}"
+                                        {% if order.getDishes().contains(dish) %} checked="checked" {% endif %}
+                                >
+                                <label class="custom-control-label" for="select_dish_{{ dish.id }}">{{ dish.label }}</label>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
             {% endfor %}
-        {% endfor %}
-        </div>
-        <div class="container-bottom">
-            <a href="{{ path('booking_order_view', {'id': order.id}) }}" class="btn btn-primary">Voir la réservation</a>
         </div>
     </section>
 {% endblock %}
@@ -46,8 +59,7 @@
         function setContainerPaddingTop()
         {
             $('.section-booking-meal .container')
-                .css('padding-top', $('.section-booking-meal .container-top').outerHeight()+15)
-                .css('padding-bottom', $('.section-booking-meal .container-bottom').outerHeight()+15);
+                .css('padding-top', $('.section-booking-meal .container-top').outerHeight()+15);
         }
 
         /**
@@ -56,6 +68,21 @@
          */
         function setDishBorderActive($dish){
             $dish.closest('.dish').addClass('border-primary');
+        }
+
+        /**
+         *
+         */
+        function toggleMealBookinFinish()
+        {
+            if($('.select-dish:checked').length > 0)
+            {
+                $('#meal_booking_finish').removeClass('disabled');
+            }
+            else
+            {
+                $('#meal_booking_finish').addClass('disabled');
+            }
         }
 
         /**
@@ -70,6 +97,7 @@
 
             setContainerPaddingTop();
             setDishBorderActive($('.select-dish:checked'));
+            toggleMealBookinFinish();
 
             $(window).resize(function () {
                 setContainerPaddingTop();
@@ -79,7 +107,9 @@
                 let $checkbox = $(this);
                 if($checkbox.prop('checked')){
                     let url = $checkbox.data('action-add-dish');
-                    $.get(url).done(function(response){
+                    $.get(
+                        url
+                    ).done(function(response){
                         if(handleAjaxResponse(response)){
                             setDishBorderActive($checkbox);
                         }else{
@@ -87,6 +117,8 @@
                         }
                     }).fail(function(){
                         $checkbox.prop('checked', false);
+                    }).always(function () {
+                        toggleMealBookinFinish();
                     });
                 }else{
                     let url = $checkbox.data('action-remove-dish');
@@ -98,6 +130,8 @@
                         }
                     }).fail(function(){
                         $checkbox.prop('checked', true);
+                    }).always(function () {
+                        toggleMealBookinFinish();
                     });
                 }
             });

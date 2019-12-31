@@ -22,6 +22,16 @@ class Period
     private $label;
 
     /**
+     * @ORM\Column(type="time")
+     */
+    private $startTime;
+
+    /**
+     * @ORM\Column(type="integer", nullable=false)
+     */
+    private $bookTimeLimit;
+
+    /**
      * @ORM\Column(type="integer", nullable=false)
      */
     private $position = 1;
@@ -55,6 +65,42 @@ class Period
     {
         $this->label = $label;
 
+        return $this;
+    }
+
+    /**
+     * @return \DateTimeInterface
+     */
+    public function getStartTime(): \DateTimeInterface
+    {
+        return $this->startTime;
+    }
+
+    /**
+     * @param \DateTimeInterface $startTime
+     * @return Period
+     */
+    public function setStartTime(\DateTimeInterface $startTime)
+    {
+        $this->startTime = $startTime;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBookTimeLimit()
+    {
+        return $this->bookTimeLimit;
+    }
+
+    /**
+     * @param mixed $bookTimeLimit
+     * @return Period
+     */
+    public function setBookTimeLimit($bookTimeLimit)
+    {
+        $this->bookTimeLimit = $bookTimeLimit;
         return $this;
     }
 

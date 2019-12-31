@@ -24,6 +24,11 @@ class Meal
     private $date;
 
     /**
+     * @ORM\Column(type="datetime", nullable=false)
+     */
+    private $bookDateLimit;
+
+    /**
      * @ORM\Column(type="boolean", nullable=false)
      */
     private $published = false;
@@ -101,6 +106,24 @@ class Meal
     }
 
     /**
+     * @return mixed
+     */
+    public function getBookDateLimit()
+    {
+        return $this->bookDateLimit;
+    }
+
+    /**
+     * @param mixed $bookDateLimit
+     * @return Meal
+     */
+    public function setBookDateLimit($bookDateLimit)
+    {
+        $this->bookDateLimit = $bookDateLimit;
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isPublished(): bool
@@ -155,7 +178,7 @@ class Meal
     }
 
     /**
-     * @return mixed
+     * @return Period
      */
     public function getPeriod()
     {
@@ -163,10 +186,10 @@ class Meal
     }
 
     /**
-     * @param mixed $period
+     * @param Period $period
      * @return Meal
      */
-    public function setPeriod($period)
+    public function setPeriod(Period $period)
     {
         $this->period = $period;
         return $this;

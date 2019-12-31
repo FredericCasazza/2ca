@@ -28,7 +28,7 @@
                 <nav>
                     <div class="nav btn-group" id="meal_nav_tab" role="tablist" >
                         {% for meal in meals %}
-                            <a class="btn btn-outline-primary {% if loop.first %} active {% endif %}"
+                            <a class="btn btn-sm btn-outline-primary {% if loop.first %} active {% endif %}"
                                id="meal_{{ meal.id }}_button" data-toggle="tab" href="#meal_{{ meal.id }}" role="tab" aria-controls="meal_{{ meal.id }}" aria-selected="true"
                             >
                                 {{ meal.period.label }}
@@ -39,12 +39,36 @@
                 <div class="tab-content" id="meal_nav_content">
                     {% for meal in meals %}
                         <div class="tab-pane fade show {% if loop.first %} active {% endif %}" id="meal_{{ meal.id }}" role="tabpanel" aria-labelledby="meal_{{ meal.id }}_button">
-                            {% if orders[meal.id] is defined and orders[meal.id].getDishes is not empty %}
-
+                            {% if helper.get('meal').isOverBookingDeadline(meal) %}
+                                <div>
+                                    <div class="callout callout-info d-inline-flex align-items-center text-info">
+                                        <i class="fas fa-info-circle fa-2x mr-2"></i>
+                                        <strong>
+                                            Réservation possible jusqu'au {{ meal.bookDateLimit|localdate('full') }} {{ meal.bookDateLimit|localtime('short') }}
+                                        </strong>
+                                    </div>
+                                </div>
+                                {% if orders[meal.id] is defined and orders[meal.id].getDishes is not empty and orders[meal.id].validationDate is empty %}
+                                    <div>
+                                        <div class="callout callout-warning d-inline-flex align-items-center text-warning">
+                                            <i class="fas fa-exclamation-triangle fa-2x mr-2"></i>
+                                            <strong>
+                                                Vous n'avez pas encore finalisé votre réservation.
+                                            </strong>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                <div class="mt-4">
+                                    <a href="{{ path('booking_meal', {'id': meal.id}) }}" class="btn btn-primary">Réserver votre repas</a>
+                                </div>
                             {% else %}
-                                <h5 class="text-muted">Vous n'avez pas encore fait de réservation</h5>
+                                <div class="callout callout-danger d-inline-flex align-items-center text-danger">
+                                    <i class="fas fa-exclamation-triangle fa-2x mr-2"></i>
+                                    <strong>
+                                        La date limite de réservation est dépassée
+                                    </strong>
+                                </div>
                             {% endif %}
-                            <a href="{{ path('booking_meal', {'id': meal.id}) }}" class="btn btn-lg btn-primary mt-4">Réserver votre repas</a>
                         </div>
                     {% endfor %}
                 </div>

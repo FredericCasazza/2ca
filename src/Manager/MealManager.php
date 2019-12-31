@@ -3,6 +3,7 @@
 
 namespace App\Manager;
 
+use App\Entity\Establishment;
 use App\Entity\Meal;
 use App\Event\Meal\CreateMealEvent;
 use App\Event\Meal\PublishMealEvent;
@@ -56,12 +57,13 @@ class MealManager extends AbstractManager
     }
 
     /**
-     * @param $date
+     * @param \DateTime $date
+     * @param Establishment $establishment
      * @return mixed
      */
-    public function findBookableByDate($date)
+    public function findBookableByDateAndEstablishment(\DateTime $date, Establishment $establishment)
     {
-        return $this->mealRepository->findBookableByDate($date);
+        return $this->mealRepository->findBookableByDateAndEstablishment($date, $establishment);
     }
 
     /**
@@ -91,7 +93,13 @@ class MealManager extends AbstractManager
     public function create(Meal $meal)
     {
         $currentDate = new \DateTime();
-        $meal->setCreationDate($currentDate)
+        $date = \DateTime::createFromFormat(
+            'Y-m-d H:i',
+            "{$meal->getDate()->format('Y-m-d')} {$meal->getPeriod()->getStartTime()->format('H:i')}"
+        );
+        $bookDateLimit = $date->modify("-{$meal->getPeriod()->getBookTimeLimit()} hour");
+        $meal->setBookDateLimit($bookDateLimit)
+            ->setCreationDate($currentDate)
             ->setModificationDate($currentDate);
         $event = new CreateMealEvent($meal);
         $this->eventDispatcher->dispatch($event);

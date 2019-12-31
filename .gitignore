@@ -9,6 +9,10 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
+###> symfony/requirements-checker ###
+/public/check.php
+###< symfony/requirements-checker ###
+
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
 /public/build/
@@ -22,3 +26,4 @@ yarn-error.log
 
 ###> PhpStorm ###
 /.idea/
+###< PhpStorm ###

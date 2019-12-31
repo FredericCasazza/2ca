@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -43,6 +45,20 @@ class Dish
      * @Assert\NotBlank()
      */
     private $meal;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Order", inversedBy="dishes")
+     * @ORM\JoinTable(name="order_dish")
+     */
+    private $orders;
+
+    /**
+     * Dish constructor.
+     */
+    public function __construct()
+    {
+        $this->orders = new ArrayCollection();
+    }
 
     /**
      * @return int|null
@@ -123,6 +139,51 @@ class Dish
     public function setMeal(Meal $meal): Dish
     {
         $this->meal = $meal;
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getOrder(): Collection
+    {
+        return $this->orders;
+    }
+
+    /**
+     * @param Collection $orders
+     * @return $this
+     */
+    public function setOrders(Collection $orders): self
+    {
+        $this->orders = $orders;
+        return $this;
+    }
+
+    /**
+     * @param Order $order
+     * @return $this
+     */
+    public function addOrder(Order $order): self
+    {
+        if(!$this->orders->contains($order))
+        {
+            $this->orders[] = $order;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Order $order
+     * @return $this
+     */
+    public function removeOrder(Order $order): self
+    {
+        if ($this->orders->contains($order)) {
+            $this->orders->removeElement($order);
+        }
+
         return $this;
     }
 }

@@ -47,11 +47,7 @@ class Order
     private $user;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Dish")
-     * @ORM\JoinTable(name="order_dish",
-     *      joinColumns={@ORM\JoinColumn(name="order_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="dish_id", referencedColumnName="id")}
-     *    )
+     * @ORM\ManyToMany(targetEntity="Dish", mappedBy="orders")
      */
     private $dishes;
 
@@ -191,6 +187,7 @@ class Order
         if(!$this->dishes->contains($dish))
         {
             $this->dishes[] = $dish;
+            $dish->addOrder($this);
         }
 
         return $this;
@@ -204,6 +201,7 @@ class Order
     {
         if ($this->dishes->contains($dish)) {
             $this->dishes->removeElement($dish);
+            $dish->removeOrder($this);
         }
 
         return $this;

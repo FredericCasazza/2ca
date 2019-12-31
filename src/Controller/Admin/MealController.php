@@ -7,6 +7,7 @@ namespace App\Controller\Admin;
 use App\Entity\Dish;
 use App\Entity\Meal;
 use App\Form\DishType;
+use App\Form\MealEditType;
 use App\Form\MealType;
 use App\Manager\DishCategoryManager;
 use App\Manager\DishManager;
@@ -179,7 +180,7 @@ class MealController extends AbstractController
             ]);
         }
 
-        $form = $this->createForm(MealType::class, $meal);
+        $form = $this->createForm(MealEditType::class, $meal);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid())

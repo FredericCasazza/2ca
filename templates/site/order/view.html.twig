@@ -1,0 +1,72 @@
+{% extends 'site/layout.html.twig' %}
+
+{% block main %}
+    <section class="section-booking-meal">
+        <div class="container-top">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h4>
+                        {% set referer = '' %}
+                        {% if app.request.headers.get('referer')|preg_match('~\\/booking\\/meal\\/[\\d]{1,}$~')  %}
+                            {% set referer = path('booking_meal', {'id': order.meal.id}) %}
+                        {% endif %}
+                        <a href="{{ referer }}">
+                            <i class="fas fa-arrow-circle-left text-primary mr-2"></i>
+                        </a>
+                        Votre commande du {{ order.meal.date|localdate('full')|capitalize }} {{ order.meal.period.label }}
+                    </h4>
+                </div>
+                <div class="col-sm-4 text-right">
+                    <a id="meal_booking_finish" href="{{ path('booking_order_view', {'id': order.id}) }}" class="btn btn-primary">Valider la commande</a>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            {% for dishCategory in dishesCategories %}
+                {% if dishesByCategory[dishCategory.id] is not empty %}
+                    <h5>{{ dishCategory.label }}</h5>
+                    {% for dish in dishesByCategory[dishCategory.id] %}
+                        <p>
+                            <i class="far fa-dot-circle mr-2 text-primary"></i>{{ dish.label }}
+                        </p>
+                        <hr>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        /**
+         *
+         */
+        function setContainerPaddingTop()
+        {
+            $('.section-booking-meal .container')
+                .css('padding-top', $('.section-booking-meal .container-top').outerHeight()+15);
+        }
+
+
+        /**
+         *
+         * @param $dish
+         */
+        function setDishBorderInactive($dish){
+            $dish.closest('.dish').removeClass('border-primary');
+        }
+
+        $(document).ready(function () {
+
+            setContainerPaddingTop();
+
+            $(window).resize(function () {
+                setContainerPaddingTop();
+            });
+
+        });
+    </script>
+{% endblock %}

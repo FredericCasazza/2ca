@@ -8,10 +8,10 @@ use App\Entity\Meal;
 use Tanigami\Specification\Specification;
 
 /**
- * Class IsBookableMealSpecification
+ * Class IsOverBookingDeadlineMealSpecification
  * @package App\Specification\Meal
  */
-class IsBookableMealSpecification extends Specification
+class IsOverBookingDeadlineMealSpecification extends Specification
 {
 
     /**
@@ -22,8 +22,6 @@ class IsBookableMealSpecification extends Specification
     public function isSatisfiedBy($meal): bool
     {
         if(
-            !$meal->isPublished() ||
-            $meal->getDate() < new \DateTime('today') ||
             $meal->getBookDateLimit() < new \DateTime('now')
         )
         {
@@ -31,4 +29,5 @@ class IsBookableMealSpecification extends Specification
         }
         return true;
     }
+
 }

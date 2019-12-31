@@ -6,6 +6,7 @@ namespace App\Manager;
 use App\Entity\Dish;
 use App\Entity\DishCategory;
 use App\Entity\Meal;
+use App\Entity\Order;
 use App\Event\Dish\CreateDishEvent;
 use App\Event\Dish\RemoveDishEvent;
 use App\Repository\DishRepository;

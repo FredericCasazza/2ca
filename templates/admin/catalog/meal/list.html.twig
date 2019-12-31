@@ -17,18 +17,18 @@
             <table class="table">
                 <thead>
                 <tr>
-                    <th class="col-auto">#</th>
-                    <th>Date</th>
-                    <th>Repas</th>
-                    <th>Etablissements</th>
-                    <th>Publié</th>
-                    <th class="col-auto"></th>
+                    <th scope="col">#</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Repas</th>
+                    <th scope="col">Etablissements</th>
+                    <th scope="col">Publié</th>
+                    <th scope="col"></th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for meal in meals %}
                     <tr>
-                        <td>{{ meal.id }}.</td>
+                        <th scope="row">{{ meal.id }}.</th>
                         <td>
                             <a href="{{ path('admin_meal', {'id': meal.id}) }}">
                                 {{ meal.date|localdate('long') }}

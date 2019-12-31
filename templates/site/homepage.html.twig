@@ -4,7 +4,7 @@
     <section class="section section-top">
         <div class="container">
             <h1>
-                L'entreprise de <span class="text-primary">restauration collective</span> en région <span class="text-primary">PACA</span> qu'il vous faut.
+                Entreprise de <span class="text-primary">restauration collective</span>.
             </h1>
             {% if app.user is empty %}
             <div class="mt-3">
@@ -12,10 +12,11 @@
             </div>
             {% endif %}
         </div>
-        <a href="#section-partners" class="down-arrow">
+        <a href="#section-features" class="down-arrow">
             <i class="fa fa-chevron-circle-down fa-3x text-primary"></i>
         </a>
     </section>
+    {#
     <section class="section section-partners" id="section-partners">
         <div class="container">
             <h2>Ils nous font déjà confiance</h2>
@@ -29,6 +30,7 @@
             </div>
         </div>
     </section>
+    #}
     <section class="section section-features" id="section-features">
         <div class="container">
             <h2>Que souhaitez-vous faire ?</h2>
@@ -49,10 +51,12 @@
             <p class="pb-4">
                 Vous souhaitez plus d'informations nous concernant ou vous avez des questions ?
             </p>
+            {#
             <div class="contact d-flex justify-content-start">
                 <i class="fa fa-paper-plane fa-2x text-primary mr-3"></i>
                 <h4>contact@c2a-restauration.com</h4>
             </div>
+            #}
             <div class="contact d-flex justify-content-start">
                 <i class="fa fa-mobile fa-3x text-primary ml-1 mr-3"></i>
                 <h4>+33 6 00 00 00 00</h4>

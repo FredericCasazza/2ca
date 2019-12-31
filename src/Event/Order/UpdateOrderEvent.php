@@ -16,15 +16,15 @@ class UpdateOrderEvent extends Event
     /**
      * @var Order
      */
-    private $Order;
+    private $order;
 
     /**
      * UpdateOrderEvent constructor.
-     * @param Order $Order
+     * @param Order $order
      */
-    public function __construct(Order $Order)
+    public function __construct(Order $order)
     {
-        $this->Order = $Order;
+        $this->order = $order;
     }
 
     /**
@@ -32,6 +32,6 @@ class UpdateOrderEvent extends Event
      */
     public function getOrder(): Order
     {
-        return $this->Order;
+        return $this->order;
     }
 }

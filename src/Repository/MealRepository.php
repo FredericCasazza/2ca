@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Establishment;
 use App\Entity\Meal;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -52,18 +53,22 @@ class MealRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param $date
+     * @param \DateTime $date
+     * @param Establishment $establishment
      * @return mixed
      */
-    public function findBookableByDate($date)
+    public function findBookableByDateAndEstablishment(\DateTime $date, Establishment $establishment)
     {
         $qb = $this->createQueryBuilder('m');
-        $qb->join('m.period', 'p')
+        $qb->leftJoin('m.period', 'p')
+            ->leftJoin('m.establishments', 'e')
             ->andWhere($qb->expr()->eq('m.published', true))
             ->andWhere($qb->expr()->eq('m.date', ':date'))
+            ->andWhere($qb->expr()->eq('e.id', ':establishment'))
             ->addOrderBy('m.date', 'asc')
             ->addOrderBy('p.position', 'asc')
-            ->setParameter('date', $date);
+            ->setParameter('date', $date)
+            ->setParameter('establishment', $establishment);
 
         return $qb->getQuery()->execute();
     }
