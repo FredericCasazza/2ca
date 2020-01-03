@@ -3,7 +3,7 @@
 {% block main %}
     <div class="container-fluid pt-2">
         <div class="card table-responsive">
-            <table class="table table-hover">
+            <table class="table table-sm table-hover">
                 <thead>
                 <tr>
                     <th class="col-auto">
@@ -44,7 +44,7 @@
                         </td>
                         <td>
                             {% if notification.action is not null and notification.url is not null  %}
-                                <button class="notification-action-button btn btn-primary"
+                                <button class="notification-action-button btn btn-sm btn-primary"
                                         data-check-url="{{ path('admin_notification_ajax_check', {'id': notification.id}) }}"
                                         data-action-url="{{ notification.url }}"
                                 >

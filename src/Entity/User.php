@@ -73,6 +73,7 @@ class User implements UserInterface
     private $plainTextPassword;
 
     /**
+     * @var Establishment|null
      * @ORM\ManyToOne(targetEntity="App\Entity\Establishment")
      * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
      */
@@ -165,6 +166,15 @@ class User implements UserInterface
     }
 
     /**
+     * @param $role
+     * @return bool
+     */
+    public function hasRole($role)
+    {
+        return in_array($this->roles, $role);
+    }
+
+    /**
      * @param string $role
      * @return $this
      */
@@ -232,10 +242,10 @@ class User implements UserInterface
     }
 
     /**
-     * @param Establishment $establishment
+     * @param Establishment|null $establishment
      * @return User
      */
-    public function setEstablishment(Establishment $establishment)
+    public function setEstablishment( $establishment)
     {
         $this->establishment = $establishment;
         return $this;

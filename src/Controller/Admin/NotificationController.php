@@ -30,7 +30,7 @@ class NotificationController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $notifications = $notificationManager->paginateByUser($user, $request->query->getInt('page', 1), 15);
+        $notifications = $notificationManager->paginateByUser($user, $request->query->getInt('page', 1), 20);
 
         return $this->render('admin/notifications/list.html.twig', [
             'notifications' => $notifications

@@ -1,10 +1,18 @@
 {% extends 'site/layout.html.twig' %}
 
 {% block main %}
-    <div class="container-fluid d-flex justify-content-center" style="padding-top: 80px">
-        <div class="alert alert-danger p-4 d-inline-flex align-items-center">
+    <div class="container" style="padding-top: 80px">
+        <div class="alert alert-danger p-4">
             <i class="fas fa-exclamation-circle fa-2x mr-2"></i>
-            Vous n'êtes affilié à aucun établissement vous ne pouvez donc pas faire de réservation pour le moment.
+            Vous n'êtes pas identifié comme client et/ou n'êtes affilié à aucun établissement, vous ne pouvez donc pas faire de réservation pour le moment.
+        </div>
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="mb-4">
+                    Si vous souhaitez devenir client veuillez sélectionner un établissement dans la liste ci-dessous, afin que les administrateurs de la platerforme en soit informé.
+                </h5>
+                {{ form(form) }}
+            </div>
         </div>
     </div>
 {% endblock %}

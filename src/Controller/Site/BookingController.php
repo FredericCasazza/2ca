@@ -4,11 +4,14 @@
 namespace App\Controller\Site;
 
 
+use App\Constant\Role;
 use App\Entity\Dish;
 use App\Entity\Establishment;
 use App\Entity\Meal;
 use App\Entity\Order;
 use App\Entity\User;
+use App\Form\BecomeClientType;
+use App\Helper\RoleHelper;
 use App\Manager\DishCategoryManager;
 use App\Manager\DishManager;
 use App\Manager\MealManager;
@@ -33,17 +36,21 @@ class BookingController extends AbstractController
      * @param $selectedDate
      * @param MealManager $mealManager
      * @param OrderManager $orderManager
+     * @param RoleHelper $roleHelper
      * @return Response
      * @throws \Exception
      */
-    public function booking($selectedDate, MealManager $mealManager, OrderManager $orderManager)
+    public function booking($selectedDate, MealManager $mealManager, OrderManager $orderManager, RoleHelper $roleHelper)
     {
         /** @var User $user */
         $user = $this->getUser();
 
-        if(!$user->getEstablishment() instanceof Establishment)
+        if(!$roleHelper->isGranted($user, Role::ROLE_CLIENT) || !$user->getEstablishment() instanceof Establishment)
         {
-            return $this->render('site/booking/no_establishment.html.twig');
+            $form = $this->createForm(BecomeClientType::class);
+            return $this->render('site/booking/no_establishment.html.twig', [
+                'form' => $form->createView()
+            ]);
         }
 
 
