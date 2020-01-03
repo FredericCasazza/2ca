@@ -28,14 +28,11 @@ class UserFixture extends Fixture
      */
     public function load(ObjectManager $manager)
     {
-        // $product = new Product();
-        // $manager->persist($product);
-
         $user = new User();
-        $user->setEmail('frederic.casazza@hotmail.fr')
-            ->setLastname('Casazza')
-            ->setFirstname('Frédéric')
-            ->setPassword($this->userPasswordEncoder->encodePassword($user, 'titia123'))
+        $user->setEmail('administrator@2ca-sdis.com')
+            ->setLastname('2CA')
+            ->setFirstname('Administrator')
+            ->setPassword($this->userPasswordEncoder->encodePassword($user, 'Administrator'))
             ->setRoles(['ROLE_USER']);
 
         $manager->persist($user);
