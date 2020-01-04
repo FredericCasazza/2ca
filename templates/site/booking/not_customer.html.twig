@@ -11,7 +11,13 @@
                 <h5 class="mb-4">
                     Si vous souhaitez devenir client veuillez sélectionner un établissement dans la liste ci-dessous, afin que les administrateurs de la platerforme en soit informé.
                 </h5>
-                {{ form(form) }}
+                {% if form is defined %}
+                    {{ form(form) }}
+                {% else %}
+                    <h6 class="text-danger text-center">
+                        Vous avez déjà envoyé une demande, si vous souhaitez en renvoyer une veuillez attendre 48h aprés votre dernière demande.
+                    </h6>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -4,6 +4,7 @@
 namespace App\Form;
 
 
+use App\Entity\CustomerRequest;
 use App\Entity\Establishment;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -11,8 +12,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class BecomeClientType extends AbstractType
+class CustomerRequestType extends AbstractType
 {
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -29,9 +31,17 @@ class BecomeClientType extends AbstractType
             }
         ])->add('confirm', CheckboxType::class, [
             'label' => "Je souhaite être identifié comme client afin de pouvoir accéder à certaines fonctionnalités de la plateforme comme la réservation de repas en ligne.",
-            'label_attr' => ['class' => 'checkbox-custom font-weight-normal']
+            'label_attr' => ['class' => 'checkbox-custom font-weight-normal'],
+            'mapped' => false
         ])->add('submit', SubmitType::class, [
             'label' => "Confirmer"
+        ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => CustomerRequest::class
         ]);
     }
 }

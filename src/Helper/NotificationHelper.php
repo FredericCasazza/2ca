@@ -95,6 +95,9 @@ class NotificationHelper
             case NotificationType::NEW_REGISTRATION:
                 $icon = '<i class="fas fa-user mr-2"></i>';
                 break;
+            case NotificationType::NEW_CUSTOMER_REQUEST:
+                $icon = '<i class="fas fa-user-tie mr-2"></i>';
+                break;
         }
         return $icon;
     }

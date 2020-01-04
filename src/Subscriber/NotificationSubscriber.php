@@ -7,6 +7,7 @@ namespace App\Subscriber;
 use App\Constant\NotificationType;
 use App\Constant\Role;
 use App\Entity\Notification;
+use App\Event\CustomerRequest\CreateCustomerRequestEvent;
 use App\Event\Notification\CreateNotificationEvent;
 use App\Event\Notification\RemoveNotificationEvent;
 use App\Event\Notification\UpdateNotificationEvent;
@@ -69,6 +70,9 @@ class NotificationSubscriber implements EventSubscriberInterface
             CreateUserEvent::class => [
                 ['newRegistration', 10]
             ],
+            CreateCustomerRequestEvent::class => [
+                ['newCustomerRequest', 10]
+            ]
         ];
     }
 
@@ -118,6 +122,22 @@ class NotificationSubscriber implements EventSubscriberInterface
             ->setMessage("Nouvel utilisateur: {$user->getFirstname()} {$user->getLastname()} s'est inscrit !")
             ->setAction("Voir l'utilisateur")
             ->setUrl($this->router->generate('admin_user_edit', ['id' => $user->getId()]));
+        $this->notificationManager->create($notification);
+    }
+
+    /**
+     * @param CreateCustomerRequestEvent $event
+     * @throws \Exception
+     */
+    public function newCustomerRequest(CreateCustomerRequestEvent $event)
+    {
+        $customerRequest = $event->getCustomerRequest();
+        $notification = new Notification();
+        $notification->setRole(Role::ROLE_ADMIN)
+            ->setType(NotificationType::NEW_CUSTOMER_REQUEST)
+            ->setMessage("Demande client: {$customerRequest->getUser()->getFirstname()} {$customerRequest->getUser()->getLastname()} souhaite devenir client de l'établissement \"{$customerRequest->getEstablishment()->getLabel()}\"")
+            ->setAction("Voir l'utilisateur")
+            ->setUrl($this->router->generate('admin_user_edit', ['id' => $customerRequest->getUser()->getId()]));
         $this->notificationManager->create($notification);
     }
 

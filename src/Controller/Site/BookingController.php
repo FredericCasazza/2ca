@@ -5,13 +5,16 @@ namespace App\Controller\Site;
 
 
 use App\Constant\Role;
+use App\Entity\CustomerRequest;
 use App\Entity\Dish;
 use App\Entity\Establishment;
 use App\Entity\Meal;
 use App\Entity\Order;
 use App\Entity\User;
-use App\Form\BecomeClientType;
+use App\Form\BecomeCustomerType;
+use App\Form\CustomerRequestType;
 use App\Helper\RoleHelper;
+use App\Manager\CustomerRequestManager;
 use App\Manager\DishCategoryManager;
 use App\Manager\DishManager;
 use App\Manager\MealManager;
@@ -21,6 +24,7 @@ use App\Specification\Order\CanAddThisDishToOrderSpecification;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -32,7 +36,7 @@ class BookingController extends AbstractController
 {
 
     /**
-     * @Route("/booking/{selectedDate}", name="booking", defaults={"selectedDate": null})
+     * @Route("/booking/meals/{selectedDate}", name="booking", defaults={"selectedDate": null})
      * @param $selectedDate
      * @param MealManager $mealManager
      * @param OrderManager $orderManager
@@ -47,10 +51,7 @@ class BookingController extends AbstractController
 
         if(!$roleHelper->isGranted($user, Role::ROLE_CLIENT) || !$user->getEstablishment() instanceof Establishment)
         {
-            $form = $this->createForm(BecomeClientType::class);
-            return $this->render('site/booking/no_establishment.html.twig', [
-                'form' => $form->createView()
-            ]);
+            return $this->redirectToRoute('booking_not_customer');
         }
 
 
@@ -92,6 +93,49 @@ class BookingController extends AbstractController
             'selectedDate' => $selectedDate->format('Y-m-d'),
             'meals' => $meals,
             'orders' => $orders
+        ]);
+    }
+
+    /**
+     * @Route("/booking/not_customer", name="booking_not_customer")
+     * @param Request $request
+     * @param CustomerRequestManager $customerRequestManager
+     * @return Response
+     * @throws \Exception
+     */
+    public function notCustomer(Request $request, CustomerRequestManager $customerRequestManager)
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $customerRequest = $customerRequestManager->findByUser($user);
+
+        if($customerRequest instanceof CustomerRequest){
+            // If customer request has more than 2 days
+            if($customerRequest->getCreationDate() <= (new \DateTime())->modify('-2 day'))
+            {
+                $customerRequestManager->remove($customerRequest);
+            }
+            else
+            {
+                return $this->render('site/booking/not_customer.html.twig');
+            }
+        }
+
+        $customerRequest = new CustomerRequest();
+        $customerRequest->setUser($user);
+
+        $form = $this->createForm(CustomerRequestType::class, $customerRequest);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $customerRequest = $form->getData();
+            $customerRequestManager->create($customerRequest);
+        }
+
+        return $this->render('site/booking/not_customer.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 
