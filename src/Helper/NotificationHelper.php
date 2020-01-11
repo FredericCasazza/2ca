@@ -98,6 +98,9 @@ class NotificationHelper
             case NotificationType::NEW_CUSTOMER_REQUEST:
                 $icon = '<i class="fas fa-user-tie mr-2"></i>';
                 break;
+            case NotificationType::NEW_ORDER_VALIDATED:
+                $icon = '<i class="far fa-thumbs-up mr-2"></i>';
+                break;
         }
         return $icon;
     }

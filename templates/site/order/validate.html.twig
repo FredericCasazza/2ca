@@ -1,0 +1,9 @@
+{{ form_start(form, {'attr': {'class': 'modal-action-form', 'data-action-url': path('order_ajax_validate', {'id': form.vars.data.id}) }}) }}
+    {{ form_row(form.comment) }}
+    <h6>
+        <u>Attention une fois votre commande validée il ne vous sera plus possible de la modifier</u>
+    </h6>
+    <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-block btn-primary mr-2">Valider</button>
+    </div>
+{{ form_end(form) }}

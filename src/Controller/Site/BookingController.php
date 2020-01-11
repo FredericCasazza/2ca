@@ -11,8 +11,8 @@ use App\Entity\Establishment;
 use App\Entity\Meal;
 use App\Entity\Order;
 use App\Entity\User;
-use App\Form\BecomeCustomerType;
 use App\Form\CustomerRequestType;
+use App\Helper\OrderHelper;
 use App\Helper\RoleHelper;
 use App\Manager\CustomerRequestManager;
 use App\Manager\DishCategoryManager;
@@ -146,10 +146,18 @@ class BookingController extends AbstractController
      * @param DishCategoryManager $dishCategoryManager
      * @param DishManager $dishManager
      * @param OrderManager $orderManager
+     * @param OrderHelper $orderHelper
      * @return RedirectResponse|Response
      * @throws \Exception
      */
-    public function meal($id, MealManager $mealManager, DishCategoryManager $dishCategoryManager, DishManager $dishManager, OrderManager $orderManager)
+    public function meal(
+        $id,
+        MealManager $mealManager,
+        DishCategoryManager $dishCategoryManager,
+        DishManager $dishManager,
+        OrderManager $orderManager,
+        OrderHelper $orderHelper
+    )
     {
         $meal = $mealManager->find($id);
 
@@ -183,8 +191,21 @@ class BookingController extends AbstractController
         {
             $order = new Order();
             $order->setUser($user)
+                ->setEstablishment($user->getEstablishment())
                 ->setMeal($meal);
             $orderManager->create($order);
+        }
+
+        if(!$orderHelper->isAuthorizedUser($order))
+        {
+            throw $this->createAccessDeniedException();
+        }
+
+        if($orderHelper->isValidate($order))
+        {
+            return $this->redirectToRoute('order_view', [
+                'id' => $order->getId()
+            ]);
         }
 
         return $this->render('site/booking/meal.html.twig', [
@@ -200,10 +221,11 @@ class BookingController extends AbstractController
      * @param $id
      * @param OrderManager $orderManager
      * @param DishManager $dishManager
+     * @param OrderHelper $orderHelper
      * @return JsonResponse
      * @throws \Exception
      */
-    public function ajaxAddDish($id, OrderManager $orderManager, DishManager $dishManager)
+    public function ajaxAddDish($id, OrderManager $orderManager, DishManager $dishManager, OrderHelper $orderHelper)
     {
         $dish = $dishManager->find($id);
 
@@ -239,6 +261,14 @@ class BookingController extends AbstractController
             ]);
         }
 
+        if(!$orderHelper->isAuthorizedUser($order))
+        {
+            return $this->json([
+                'status' => false,
+                'content' => "Vous n'êtes pas autorisé à modifier cette commande."
+            ]);
+        }
+
         $canAddThisDishToOrderSpecification = new CanAddThisDishToOrderSpecification($order);
         if (!$canAddThisDishToOrderSpecification->isSatisfiedBy($dish))
         {
@@ -266,7 +296,7 @@ class BookingController extends AbstractController
      * @return JsonResponse
      * @throws \Exception
      */
-    public function ajaxRemoveDish($id, OrderManager $orderManager, DishManager $dishManager)
+    public function ajaxRemoveDish($id, OrderManager $orderManager, DishManager $dishManager, OrderHelper $orderHelper)
     {
         $dish = $dishManager->find($id);
 
@@ -299,6 +329,14 @@ class BookingController extends AbstractController
             return $this->json([
                 'status' => false,
                 'content' => "Il n'y a pas de réservation vous concernant à cette dat."
+            ]);
+        }
+
+        if(!$orderHelper->isAuthorizedUser($order))
+        {
+            return $this->json([
+                'status' => false,
+                'content' => "Vous n'êtes pas autorisé à modifier cette commande."
             ]);
         }
 

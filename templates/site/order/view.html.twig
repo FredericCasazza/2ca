@@ -9,6 +9,8 @@
                         {% set referer = '' %}
                         {% if app.request.headers.get('referer')|preg_match('~\\/booking\\/meal\\/[\\d]{1,}$~')  %}
                             {% set referer = path('booking_meal', {'id': order.meal.id}) %}
+                        {% else %}
+                            {% set referer = path('booking') %}
                         {% endif %}
                         <a href="{{ referer }}">
                             <i class="fas fa-arrow-circle-left text-primary mr-2"></i>
@@ -17,22 +19,34 @@
                     </h4>
                 </div>
                 <div class="col-sm-4 text-right">
-                    <a id="meal_booking_finish" href="{{ path('booking_order_view', {'id': order.id}) }}" class="btn btn-primary">Valider la commande</a>
+                    {% if not helper.get('order').isValidate(order) %}
+                        <button class="modal-action btn btn-primary"
+                                data-action-title="Valider la commande"
+                                data-action-url="{{ path('order_ajax_validate', {'id': order.id}) }}"
+                        >
+                            Valider la commande
+                        </button>
+                    {% endif %}
                 </div>
             </div>
         </div>
         <div class="container">
-            {% for dishCategory in dishesCategories %}
-                {% if dishesByCategory[dishCategory.id] is not empty %}
-                    <h5>{{ dishCategory.label }}</h5>
-                    {% for dish in dishesByCategory[dishCategory.id] %}
-                        <p>
-                            <i class="far fa-dot-circle mr-2 text-primary"></i>{{ dish.label }}
-                        </p>
-                        <hr>
-                    {% endfor %}
-                {% endif %}
-            {% endfor %}
+            {% if not helper.get('order').isValidate(order) %}
+                <div class="callout callout-warning text-warning">
+                    <i class="fas fa-exclamation-triangle fa-2x mr-2"></i>
+                    <strong>
+                        Vous n'avez pas encore validé votre commande.
+                    </strong>
+                </div>
+            {% else %}
+                <div class="callout callout-success text-success">
+                    <i class="far fa-thumbs-up fa-2x mr-2"></i>
+                    <strong>
+                        Votre commande a bien été validé.
+                    </strong>
+                </div>
+            {% endif %}
+            {% include 'common/order/view.inc.html.twig' %}
         </div>
     </section>
 {% endblock %}

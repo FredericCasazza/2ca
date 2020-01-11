@@ -1,0 +1,56 @@
+{% extends 'common/print_layout.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        @media print{@page {size: landscape}}
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <h5 class="text-center">
+        Commandes du {{ date|localdate('full') }} {{ period.label }} {{ establishment.label }}
+    </h5>
+    <div class="table-responsive table-sm">
+        <table class="table" style="line-height: 1rem;">
+            <thead>
+            <tr>
+                <th style="width: 45px;">Payé</th>
+                <th>Client</th>
+                {% for dishCategory in dishCategories %}
+                    <th>{{ dishCategory.label }}</th>
+                {% endfor %}
+                <th>Commentaire</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>
+
+                    </td>
+                    <td>
+                        {{ order.user.lastname }} {{ order.user.firstname }}
+                    </td>
+                    {% for dishCategory in dishCategories %}
+                        <td>
+                            {% if ordersDishCategories[order.id] is defined and ordersDishCategories[order.id][dishCategory.id] is defined %}
+                                <ul style="list-style: circle; padding-left: 15px;">
+                                    {% for dish in ordersDishCategories[order.id][dishCategory.id] %}
+                                        <li>{{ dish.label }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                    <td>{{ order.comment }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

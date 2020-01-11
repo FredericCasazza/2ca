@@ -323,4 +323,12 @@ class Meal
 
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return strftime('%A %d %B %Y', $this->getDate()->getTimestamp()).' '.$this->getPeriod()->getLabel();
+    }
 }

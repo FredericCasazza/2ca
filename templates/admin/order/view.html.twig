@@ -1,0 +1,114 @@
+{% extends 'admin/order/layout.html.twig' %}
+
+{% block main %}
+    <div class="toolbar sticky-top">
+        <div class="row">
+            <div class="col-md-6">
+                <h3 class="pl-3">
+                    <a href="{{ path('admin_orders') }}">
+                        <i class="fas fa-arrow-circle-left text-primary mr-2"></i>
+                    </a>
+                    Commande n°{{ order.id }}
+                </h3>
+            </div>
+            <div class="col-md-6">
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-5 mb-2">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <th>
+                                                Commande n°
+                                            </th>
+                                            <td>
+                                                {{ order.id }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                Menu
+                                            </th>
+                                            <td>
+                                                {{ order.meal.date|localdate('full') }} {{ order.meal.period.label }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                Client
+                                            </th>
+                                            <td>
+                                                {{ order.user.lastname }} {{ order.user.firstname }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                Commentaire
+                                            </th>
+                                            <td>
+                                                {{ order.comment }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                Etablissement
+                                            </th>
+                                            <td>
+                                                {{ order.establishment.label }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                Création
+                                            </th>
+                                            <td>
+                                                le {{ order.creationDate|date(' d/m/Y à H:i:s') }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                Dernière modification
+                                            </th>
+                                            <td>
+                                                le {{ order.modificationDate|date(' d/m/Y à H:i:s') }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>
+                                                Validation
+                                            </th>
+                                            <td>
+                                                {% if order.validationDate is not empty %}
+                                                    le {{ order.validationDate|date(' d/m/Y à H:i:s') }}
+                                                {% else %}
+                                                    <span class="text-danger">
+                                                        Cette commande n'a pas encore été validé
+                                                    </span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-7 mb-2">
+                        <div class="card">
+                            <div class="card-body">
+                                <h2 class="mb-4">Menu commandé</h2>
+                                {% include 'common/order/view.inc.html.twig' %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

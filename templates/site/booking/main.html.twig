@@ -23,7 +23,7 @@
         </div>
         <section id="meals_booking">
             {% if meals is empty %}
-                <h5 class="text-muted font-italic text-center">Il n'y a aucun menu disponible à la réservation pour cette date</h5>
+                <h5 class="text-muted font-italic text-center">Il n'y a aucun menu disponible à la réservation pour le {{ dates[selectedDate]|localdate('full') }}</h5>
             {% else %}
                 <nav>
                     <div class="nav btn-group" id="meal_nav_tab" role="tablist" >
@@ -59,7 +59,13 @@
                                     </div>
                                 {% endif %}
                                 <div class="mt-4">
-                                    <a href="{{ path('booking_meal', {'id': meal.id}) }}" class="btn btn-primary">Réserver votre repas</a>
+                                    <a href="{{ path('booking_meal', {'id': meal.id}) }}" class="btn btn-primary">
+                                        {% if helper.get('order').isValidate(orders[meal.id]) %}
+                                            Voir votre commande
+                                        {% else %}
+                                            Réserver votre repas
+                                        {% endif %}
+                                    </a>
                                 </div>
                             {% else %}
                                 <div class="callout callout-danger d-inline-flex align-items-center text-danger">

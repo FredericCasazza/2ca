@@ -11,6 +11,7 @@ use App\Event\CustomerRequest\CreateCustomerRequestEvent;
 use App\Event\Notification\CreateNotificationEvent;
 use App\Event\Notification\RemoveNotificationEvent;
 use App\Event\Notification\UpdateNotificationEvent;
+use App\Event\Order\ValidateOrderEvent;
 use App\Event\User\CreateUserEvent;
 use App\Manager\NotificationManager;
 use App\Repository\NotificationRepository;
@@ -72,6 +73,9 @@ class NotificationSubscriber implements EventSubscriberInterface
             ],
             CreateCustomerRequestEvent::class => [
                 ['newCustomerRequest', 10]
+            ],
+            ValidateOrderEvent::class => [
+                ['newOrderValidated', 10]
             ]
         ];
     }
@@ -136,8 +140,25 @@ class NotificationSubscriber implements EventSubscriberInterface
         $notification->setRole(Role::ROLE_ADMIN)
             ->setType(NotificationType::NEW_CUSTOMER_REQUEST)
             ->setMessage("Demande client: {$customerRequest->getUser()->getFirstname()} {$customerRequest->getUser()->getLastname()} souhaite devenir client de l'établissement \"{$customerRequest->getEstablishment()->getLabel()}\"")
-            ->setAction("Voir l'utilisateur")
+            ->setAction("Modifier l'utilisateur")
             ->setUrl($this->router->generate('admin_user_edit', ['id' => $customerRequest->getUser()->getId()]));
+        $this->notificationManager->create($notification);
+    }
+
+    /**
+     * @param ValidateOrderEvent $event
+     * @throws \Exception
+     */
+    public function newOrderValidated(ValidateOrderEvent $event)
+    {
+        $order = $event->getOrder();
+        $notification = new Notification();
+        $notification->setRole(Role::ROLE_ADMIN)
+            ->setType(NotificationType::NEW_ORDER_VALIDATED)
+            ->setMessage("Nouvelle commande validée par {$order->getUser()->getFirstname()} {$order->getUser()->getLastname()} pour le {$order->getMeal()->getDate()->format('d/m/Y')} {$order->getMeal()->getPeriod()->getLabel()}")
+            ->setAction("Voir la commande")
+            //->setUrl($this->router->generate('admin_user_edit', ['id' => $user->getId()]));
+        ;
         $this->notificationManager->create($notification);
     }
 

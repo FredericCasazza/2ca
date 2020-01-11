@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="2CA Restauration entreprise de restauration collective.">
+    <meta name="keywords" content="2CA, Restauration,restauration collective,restaurant d'entreprise, sdis">
+    <meta name="author" content="Frédéric Casazza">
+    <title>{% block title %}2CA Restauration{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="{{asset('build/images/favicon.ico')}}" />
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
+</head>
+<body>
+{% block body %}{% endblock %}
+</body>
+</html>

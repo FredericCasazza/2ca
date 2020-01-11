@@ -1,0 +1,96 @@
+{% extends 'admin/order/layout.html.twig' %}
+
+{% block main %}
+    <div class="toolbar sticky-top">
+        <div class="row">
+            <div class="col">
+                <h3 class="">Liste des commandes</h3>
+            </div>
+            <div class="col">
+                <div class="d-flex justify-content-end">
+                    <button id="print_button" type="button" class="btn btn-primary">
+                        Imprimer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid ">
+        <div class="card table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Menu</th>
+                    <th scope="col">Etablissement</th>
+                    <th scope="col">Client</th>
+                    <th scope="col">Validée</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <th scope="row">{{ order.id }}.</th>
+                        <td>
+                            <a href="{{ path('admin_order', {'id': order.id}) }}">
+                                {{ order.meal.date|localdate('long') }} {{ order.meal.period.label }}
+                            </a>
+                        </td>
+                        <td>{{ order.establishment.label }}</td>
+                        <td>
+                            {{ order.user.lastname ~ ' ' ~ order.user.firstname }}
+                        </td>
+                        <td>
+                            {% if helper.get('order').isValidate(order) %}
+                                <span class="badge badge-primary">Oui</span>
+                            {% else %}
+                                <span class="badge badge-danger">Non</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-right">
+                            {#
+                            <div class="dropdown dropdown-actions">
+                                <button class="btn btn-link dropdown-toggle" type="button" id="meal_{{ meal.id }}_actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="meal_{{ meal.id }}_actions">
+                                    <a class="dropdown-item" href="#">Dupliquer</a>
+                                    <a class="dropdown-item" href="#">Supprimer</a>
+                                </div>
+                            </div>
+                            #}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="navigation">
+            {{ knp_pagination_render(orders) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('#print_button').click(function(){
+            let $modal_app = $('#modal_app');
+            let $modal_app_title = $('#modal_app_title');
+            let $modal_app_body = $('#modal_app_body');
+            let title = "Imprimer";
+            let url = "{{ path('admin_order_ajax_print') }}";
+            $.get(
+                url
+            ).done(function(response){
+                if(handleAjaxResponse(response)) {
+                    $modal_app_title.html(title);
+                    $modal_app_body.html(response.content);
+                    $modal_app.modal('show');
+                }
+            });
+        });
+    </script>
+{% endblock %}

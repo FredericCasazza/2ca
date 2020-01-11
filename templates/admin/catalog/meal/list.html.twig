@@ -2,13 +2,20 @@
 
 {% block main %}
     <div class="toolbar sticky-top">
-        <div class="d-flex justify-content-end">
-            <button type="button" class="modal-action btn btn-primary"
-                    data-action-title="Ajouter un menu"
-                    data-action-url="{{ path('admin_meal_ajax_create') }}"
-            >
-                Ajouter un menu
-            </button>
+        <div class="row">
+            <div class="col">
+                <h3>Liste des menus</h3>
+            </div>
+            <div class="col">
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="modal-action btn btn-primary"
+                            data-action-title="Ajouter un menu"
+                            data-action-url="{{ path('admin_meal_ajax_create') }}"
+                    >
+                        Ajouter un menu
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 

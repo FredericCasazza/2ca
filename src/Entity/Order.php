@@ -20,6 +20,11 @@ class Order
     private $id;
 
     /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $comment;
+
+    /**
      * @ORM\Column(type="datetime")
      */
     private $creationDate;
@@ -47,6 +52,12 @@ class Order
     private $user;
 
     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Establishment")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $establishment;
+
+    /**
      * @ORM\ManyToMany(targetEntity="Dish", mappedBy="orders")
      */
     private $dishes;
@@ -65,6 +76,24 @@ class Order
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getComment()
+    {
+        return $this->comment;
+    }
+
+    /**
+     * @param null|string $comment
+     * @return Order
+     */
+    public function setComment($comment): self
+    {
+        $this->comment = $comment;
+        return $this;
     }
 
     /**
@@ -106,7 +135,7 @@ class Order
     }
 
     /**
-     * @return mixed
+     * @return \DateTimeInterface
      */
     public function getValidationDate()
     {
@@ -114,10 +143,10 @@ class Order
     }
 
     /**
-     * @param mixed $validationDate
+     * @param \DateTimeInterface $validationDate
      * @return Order
      */
-    public function setValidationDate($validationDate)
+    public function setValidationDate(\DateTimeInterface $validationDate)
     {
         $this->validationDate = $validationDate;
         return $this;
@@ -143,20 +172,38 @@ class Order
     }
 
     /**
-     * @return mixed
+     * @return User|null
      */
-    public function getUser()
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
     /**
-     * @param mixed $user
+     * @param User $user
      * @return Order
      */
-    public function setUser($user)
+    public function setUser(User $user): self
     {
         $this->user = $user;
+        return $this;
+    }
+
+    /**
+     * @return Establishment|null
+     */
+    public function getEstablishment(): ?Establishment
+    {
+        return $this->establishment;
+    }
+
+    /**
+     * @param Establishment $establishment
+     * @return $this
+     */
+    public function setEstablishment(Establishment $establishment): self
+    {
+        $this->establishment = $establishment;
         return $this;
     }
 

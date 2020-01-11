@@ -1,0 +1,6 @@
+{{ form_start(form, {'attr': { 'action': path('admin_order_ajax_print'), 'class': 'modal-print-form', 'data-action-url': path('admin_order_ajax_print'), 'target': '_blank' }}) }}
+    {{ form_row(form.date) }}
+    {{ form_row(form.period) }}
+    {{ form_row(form.establishment) }}
+    <button type="submit" class="btn btn-block btn-primary" id="print_button">Imprimer</button>
+{{ form_end(form) }}

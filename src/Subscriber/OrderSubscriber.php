@@ -7,6 +7,7 @@ namespace App\Subscriber;
 use App\Event\Order\CreateOrderEvent;
 use App\Event\Order\RemoveOrderEvent;
 use App\Event\Order\UpdateOrderEvent;
+use App\Event\Order\ValidateOrderEvent;
 use App\Repository\OrderRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -47,6 +48,9 @@ class OrderSubscriber implements EventSubscriberInterface
             RemoveOrderEvent::class => [
                 ['remove', 20]
             ],
+            ValidateOrderEvent::class => [
+                ['validate', 20]
+            ]
         ];
     }
 
@@ -81,6 +85,17 @@ class OrderSubscriber implements EventSubscriberInterface
     {
         $order = $event->getOrder();
         $this->orderRepository->remove($order);
+    }
+
+    /**
+     * @param ValidateOrderEvent $event
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function validate(ValidateOrderEvent $event)
+    {
+        $order = $event->getOrder();
+        $this->orderRepository->update($order);
     }
 
 }
