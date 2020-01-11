@@ -60,7 +60,7 @@
                                 {% endif %}
                                 <div class="mt-4">
                                     <a href="{{ path('booking_meal', {'id': meal.id}) }}" class="btn btn-primary">
-                                        {% if helper.get('order').isValidate(orders[meal.id]) %}
+                                        {% if orders[meal.id] is defined and helper.get('order').isValidate(orders[meal.id]) %}
                                             Voir votre commande
                                         {% else %}
                                             Réserver votre repas
