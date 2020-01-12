@@ -20,9 +20,12 @@ class MealEditType extends AbstractType
         $builder->add('bookDateLimit', DateTimeType::class, [
             'label' => 'Date/heure limite de réservation',
             'widget' => 'single_text',
+            'html5' => false,
             'attr' => [
                 'placeholder' => 'Date/heure limite',
-                'class' => 'js-datepicker'
+                'class' => 'datetimepicker-input',
+                'data-target' => '#bookDateLimitDatetimepicker'
+                //'class' => 'js-datepicker'
             ]
         ]);
     }

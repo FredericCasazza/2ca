@@ -21,7 +21,8 @@
         "@fortawesome/fontawesome-free": "^5.12.0",
         "admin-lte": "^3.0.1",
         "bootbox": "^5.4.0",
-        "eonasdan-bootstrap-datetimepicker": "^4.17.47",
-        "jquery": "^3.4.1"
+        "jquery": "^3.4.1",
+        "moment": "^2.24.0",
+        "tempusdominus-bootstrap-4": "https://github.com/tempusdominus/bootstrap-4.git"
     }
 }

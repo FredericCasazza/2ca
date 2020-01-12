@@ -12,14 +12,17 @@ import '../css/app.scss';
 const $ = require('jquery');
 global.$ = global.jQuery = $;
 
+// Moment.js
+global.moment = require('moment');
+
 // Import Boostratp
 import 'bootstrap';
 
-// Import Bootstrap datetime picker
-import 'eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min';
-
 // Import Admin LTE
 import 'admin-lte';
+
+// Import Tempusdominus
+import 'tempusdominus-bootstrap-4';
 
 // Import Fontawesome
 import '@fortawesome/fontawesome-free/js/all.min';
