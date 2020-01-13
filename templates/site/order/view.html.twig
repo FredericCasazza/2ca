@@ -31,22 +31,23 @@
             </div>
         </div>
         <div class="container">
-            {% if not helper.get('order').isValidate(order) %}
-                <div class="callout callout-warning text-warning">
-                    <i class="fas fa-exclamation-triangle fa-2x mr-2"></i>
-                    <strong>
-                        Vous n'avez pas encore validé votre commande.
-                    </strong>
-                </div>
-            {% else %}
+            {% if helper.get('order').isValidate(order) %}
                 <div class="callout callout-success text-success">
                     <i class="far fa-thumbs-up fa-2x mr-2"></i>
                     <strong>
-                        Votre commande a bien été validé.
+                        Commande validée.
                     </strong>
                 </div>
             {% endif %}
             {% include 'common/order/view.inc.html.twig' %}
+            {% if not helper.get('order').isValidate(order) %}
+                <button class="modal-action btn btn-block btn-primary mt-4"
+                        data-action-title="Valider la commande"
+                        data-action-url="{{ path('order_ajax_validate', {'id': order.id}) }}"
+                >
+                    Valider la commande
+                </button>
+            {% endif %}
         </div>
     </section>
 {% endblock %}

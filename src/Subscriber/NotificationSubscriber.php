@@ -157,7 +157,7 @@ class NotificationSubscriber implements EventSubscriberInterface
             ->setType(NotificationType::NEW_ORDER_VALIDATED)
             ->setMessage("Nouvelle commande validée par {$order->getUser()->getFirstname()} {$order->getUser()->getLastname()} pour le {$order->getMeal()->getDate()->format('d/m/Y')} {$order->getMeal()->getPeriod()->getLabel()}")
             ->setAction("Voir la commande")
-            //->setUrl($this->router->generate('admin_user_edit', ['id' => $user->getId()]));
+            ->setUrl($this->router->generate('admin_order', ['id' => $order->getId()]));
         ;
         $this->notificationManager->create($notification);
     }

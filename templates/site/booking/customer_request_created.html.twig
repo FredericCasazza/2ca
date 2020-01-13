@@ -1,0 +1,11 @@
+{% extends 'site/layout.html.twig' %}
+
+{% block main %}
+    <div class="container" style="padding-top: 80px">
+        <div class="callout callout-success p-4 text-success">
+            <i class="fas fa-thumbs-up fa-2x mr-2"></i>
+            Votre demande a été enregistrée avec succès, elle sera traitée au plus vite par un administrateur de la plateforme.
+            <a href="{{ path('homepage') }}">Retour à la page d'accueil</a>
+        </div>
+    </div>
+{% endblock %}

@@ -38,8 +38,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * Used to upgrade (rehash) the user's password automatically over time.
+     * @param UserInterface $user
+     * @param string $newEncodedPassword
      * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
     {
@@ -50,6 +52,24 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newEncodedPassword);
         $this->_em->persist($user);
         $this->_em->flush();
+    }
+
+    /**
+     * @param $email
+     * @return User|null
+     */
+    public function findByEmail($email)
+    {
+        return $this->findOneBy(['email' => $email]);
+    }
+
+    /**
+     * @param $token
+     * @return User|null
+     */
+    public function findByReinitToken($token)
+    {
+        return $this->findOneBy(['reinitToken' => $token]);
     }
 
     /**

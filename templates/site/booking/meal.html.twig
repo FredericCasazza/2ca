@@ -13,14 +13,13 @@
                     </h4>
                 </div>
                 <div class="col-sm-4 text-right">
-                    <a id="meal_booking_finish" href="{{ path('order_view', {'id': order.id}) }}" class="btn btn-primary disabled">Continuer</a>
+                    <a href="{{ path('order_view', {'id': order.id}) }}" class="meal-booking-finish btn btn-primary disabled">Terminer la sélection</a>
                 </div>
             </div>
         </div>
         <div class="container">
-            <div class="callout callout-warning text-warning">
-                <i class="fas fa-exclamation-triangle fa-2x mr-2"></i>
-                <strong>Une fois votre sélection terminée cliquez sur "Continuer".</strong>
+            <div class="callout callout-info text-info">
+                <strong>Composez votre menu en sélectionnant les plats souhaités</strong>
             </div>
             {% for dishCategory in dishesCategories %}
                 {% if dishesByCategory[dishCategory.id] is not empty %}
@@ -46,6 +45,7 @@
                     {% endfor %}
                 {% endif %}
             {% endfor %}
+            <a href="{{ path('order_view', {'id': order.id}) }}" class="meal-booking-finish btn btn-block btn-primary disabled mt-4">Terminer la sélection</a>
         </div>
     </section>
 {% endblock %}
@@ -73,15 +73,15 @@
         /**
          *
          */
-        function toggleMealBookinFinish()
+        function toggleMealBookingFinish()
         {
             if($('.select-dish:checked').length > 0)
             {
-                $('#meal_booking_finish').removeClass('disabled');
+                $('.meal-booking-finish').removeClass('disabled');
             }
             else
             {
-                $('#meal_booking_finish').addClass('disabled');
+                $('.meal-booking-finish').addClass('disabled');
             }
         }
 
@@ -97,7 +97,7 @@
 
             setContainerPaddingTop();
             setDishBorderActive($('.select-dish:checked'));
-            toggleMealBookinFinish();
+            toggleMealBookingFinish();
 
             $(window).resize(function () {
                 setContainerPaddingTop();
@@ -118,7 +118,7 @@
                     }).fail(function(){
                         $checkbox.prop('checked', false);
                     }).always(function () {
-                        toggleMealBookinFinish();
+                        toggleMealBookingFinish();
                     });
                 }else{
                     let url = $checkbox.data('action-remove-dish');
@@ -131,7 +131,7 @@
                     }).fail(function(){
                         $checkbox.prop('checked', true);
                     }).always(function () {
-                        toggleMealBookinFinish();
+                        toggleMealBookingFinish();
                     });
                 }
             });

@@ -27,6 +27,11 @@ services:
         public: true
         arguments: ["%kernel.environment%"]
 
+    \Swift_Mailer:
+        class: \Swift_Mailer
+        factory: ['App\Factory\MailerFactory', 'create']
+        public: true
+
     twig.extension.date:
         class: Jasny\Twig\DateExtension
         tags:

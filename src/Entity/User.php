@@ -60,17 +60,27 @@ class User implements UserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-     * @Assert\Length(
-     *     min = 8,
-     *     minMessage = "Le mot de passe doit contenir {{ limit }} caractères minimum"
-     * )
      */
     private $password;
 
     /**
      * @var string|null
+     * @Assert\Length(
+     *     min = 6,
+     *     minMessage = "Le mot de passe doit contenir {{ limit }} caractères minimum"
+     * )
      */
     private $plainTextPassword;
+
+    /**
+     * @ORM\Column(type="string", length=60, nullable=true)
+     */
+    private $reinitToken;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $reinitExpirationDate;
 
     /**
      * @var Establishment|null
@@ -230,6 +240,42 @@ class User implements UserInterface
     public function setPlainTextPassword(?string $plainTextPassword): User
     {
         $this->plainTextPassword = $plainTextPassword;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getReinitToken(): ?string
+    {
+        return $this->reinitToken;
+    }
+
+    /**
+     * @param string|null $reinitToken
+     * @return $this
+     */
+    public function setReinitToken(?string $reinitToken)
+    {
+        $this->reinitToken = $reinitToken;
+        return $this;
+    }
+
+    /**
+     * @return \DateTimeInterface|null
+     */
+    public function getReinitExpirationDate(): ?\DateTimeInterface
+    {
+        return $this->reinitExpirationDate;
+    }
+
+    /**
+     * @param \DateTimeInterface|null $reinitExpirationDate
+     * @return $this
+     */
+    public function setReinitExpirationDate(?\DateTimeInterface $reinitExpirationDate)
+    {
+        $this->reinitExpirationDate = $reinitExpirationDate;
         return $this;
     }
 

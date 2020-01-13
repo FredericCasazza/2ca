@@ -5,6 +5,7 @@ namespace App\Manager;
 
 use App\Constant\Role;
 use App\Entity\User;
+use App\Event\User\CreateLostPasswordTokenUserEvent;
 use App\Event\User\CreateUserEvent;
 use App\Event\User\UpdateUserEvent;
 use App\Repository\UserRepository;
@@ -55,6 +56,24 @@ class UserManager extends AbstractManager
     }
 
     /**
+     * @param string $email
+     * @return User|null
+     */
+    public function findByEmail(string $email)
+    {
+        return $this->userRepository->findByEmail($email);
+    }
+
+    /**
+     * @param $token
+     * @return User|null
+     */
+    public function findByReinitToken($token)
+    {
+        return $this->userRepository->findByReinitToken($token);
+    }
+
+    /**
      * @param $page
      * @param $limit
      * @return PaginationInterface
@@ -62,6 +81,21 @@ class UserManager extends AbstractManager
     public function paginate($page, $limit)
     {
         return $this->userRepository->paginate($page, $limit);
+    }
+
+    /**
+     * @param User $user
+     * @throws \Exception
+     */
+    public function createLostPasswordToken(User $user)
+    {
+        $token = bin2hex(random_bytes(25));
+        $expirationDate = new \DateTime();
+        $expirationDate->modify('+2 days');
+        $user->setReinitToken($token)
+            ->setReinitExpirationDate($expirationDate);
+        $event = new CreateLostPasswordTokenUserEvent($user);
+        $this->eventDispatcher->dispatch($event);
     }
 
     /**

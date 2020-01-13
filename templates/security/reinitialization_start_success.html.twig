@@ -1,0 +1,19 @@
+{% extends 'site/layout.html.twig' %}
+
+{% block main %}
+    <section class="section-login">
+        <div class="callout callout-success d-flex align-items-center">
+            <i class="fas fa-envelope fa-3x text-success mr-3"></i>
+            <strong>
+                Un mail de réinitialisation de votre mot de passe vous a été envoyé.
+                Veuillez vérifier votre courrier électronique (pensez à regarder dans votre courrier indésirable également).
+            </strong>
+        </div>
+    </section>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    {% include 'security/recaptcha.html.twig' %}
+{% endblock %}

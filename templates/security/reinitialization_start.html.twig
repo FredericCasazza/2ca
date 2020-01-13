@@ -1,0 +1,22 @@
+{% extends 'site/layout.html.twig' %}
+
+{% block main %}
+    <section class="section-login">
+        <div>
+            {{ form_start(form) }}
+                <h3 class="mb-4">Réinitialiser mot de passe</h3>
+                <div class="callout callout-info text-info">
+                    Veuillez renseigner l'adresse mail utilisée lors de la création de votre compte afin de recevoir un lien vous permettant de réinitialiser votre mot de passe.
+                </div>
+                <input type="hidden" name="_recaptcha_token" class="recaptcha-token">
+                {{ form(form) }}
+            {{ form_end(form) }}
+        </div>
+    </section>
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+    {% include 'security/recaptcha.html.twig' %}
+{% endblock %}

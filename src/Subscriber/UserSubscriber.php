@@ -4,6 +4,7 @@
 namespace App\Subscriber;
 
 
+use App\Event\User\CreateLostPasswordTokenUserEvent;
 use App\Event\User\CreateUserEvent;
 use App\Event\User\UpdateUserEvent;
 use App\Repository\UserRepository;
@@ -42,6 +43,9 @@ class UserSubscriber implements EventSubscriberInterface
             ],
             UpdateUserEvent::class => [
                 ['update', 20]
+            ],
+            CreateLostPasswordTokenUserEvent::class => [
+                ['createLostPasswordToken', 20]
             ]
         ];
     }
@@ -63,6 +67,17 @@ class UserSubscriber implements EventSubscriberInterface
      * @throws OptimisticLockException
      */
     public function update(UpdateUserEvent $event)
+    {
+        $user = $event->getUser();
+        $this->userRepository->update($user);
+    }
+
+    /**
+     * @param CreateLostPasswordTokenUserEvent $event
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function createLostPasswordToken(CreateLostPasswordTokenUserEvent $event)
     {
         $user = $event->getUser();
         $this->userRepository->update($user);

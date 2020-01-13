@@ -132,6 +132,8 @@ class BookingController extends AbstractController
         {
             $customerRequest = $form->getData();
             $customerRequestManager->create($customerRequest);
+
+            return $this->render('site/booking/customer_request_created.html.twig');
         }
 
         return $this->render('site/booking/not_customer.html.twig', [
@@ -274,7 +276,7 @@ class BookingController extends AbstractController
         {
             return $this->json([
                 'status' => false,
-                'content' => "Vous avez déjà atteint la limite du nombre de plat de type \"{$dish->getCategory()->getLabel()}\" autorisée"
+                'content' => "Limite de \"{$dish->getCategory()->getLabel()}\" autorisée déjà atteinte."
             ]);
         }
 
