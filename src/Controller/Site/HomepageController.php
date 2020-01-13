@@ -21,6 +21,7 @@ class HomepageController extends AbstractController
      */
     public function number()
     {
+        return $this->redirectToRoute('booking');
 
         return $this->render('site/homepage.html.twig', [
         ]);

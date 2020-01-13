@@ -10,6 +10,7 @@
     <link rel="icon" type="image/x-icon" href="{{asset('build/images/favicon.ico')}}" />
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css" />
     {% endblock %}
 </head>
 <body class="sidebar-mini">
@@ -22,10 +23,32 @@
 {% include'modal.html.twig' %}
 {% block javascripts %}
     {{ encore_entry_script_tags('app') }}
+
     {#
     <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
     #}
+    <script src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js" data-cfasync="false"></script>
+    <script>
+        window.cookieconsent.initialise({
+            "palette": {
+                "popup": {
+                    "background": "#343a40",
+                    "text": "#ffffff"
+                },
+                "button": {
+                    "background": "#4bcc8c",
+                    "text": "#ffffff"
+                }
+            },
+            "showLink": false,
+            "position": "bottom-right",
+            "content": {
+                "message": "Ce site Web utilise des cookies pour vous garantir la meilleure expérience de navigation.",
+                "dismiss": "Ok"
+            }
+        });
+    </script>
     <script>
         $(document).ready(function () {
 
@@ -173,6 +196,11 @@
                 $('.bulk-action-selected-element:checked').length > 0 ? bulk_action_button.removeClass('disabled') : bulk_action_button.addClass('disabled');
             });
 
+            if(!navigator.cookieEnabled)
+            {
+            $('body').append('<div class="fixed-bottom bg-danger text-center shadow" style="min-height: 4rem; opacity: 0.9;"><h4><u>Ce site ne peut pas fonctionner sans cookies. Veuillez activer les cookies dans les paramètres de votre navigateur.</u></h4></div>');
+            }
+
         });
     </script>
     <script>
@@ -258,5 +286,12 @@
     </script>
     {% include 'flash.html.twig' %}
 {% endblock %}
+<noscript>
+    <div class="fixed-bottom bg-danger text-center shadow" style="min-height: 4rem; opacity: 0.9;">
+        <h4>
+            <u>Ce site ne peut pas fonctionner sans javascript. Veuillez activer javascript dans les paramètres de votre navigateur.</u>
+        </h4>
+    </div>
+</noscript>
 </body>
 </html>
