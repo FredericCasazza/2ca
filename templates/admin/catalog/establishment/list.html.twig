@@ -1,0 +1,101 @@
+{% extends 'admin/catalog/establishment/layout.html.twig' %}
+
+{% block main %}
+    <div class="toolbar sticky-top">
+        <div class="row">
+            <div class="col">
+                <h3>Liste des établissements</h3>
+            </div>
+            <div class="col">
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="modal-action btn btn-primary"
+                            data-action-title="Ajouter un établissement"
+                            data-action-url="{{ path('admin_establishment_ajax_create') }}"
+                    >
+                        Ajouter un établissement
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid ">
+        <div class="card table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Intitulé</th>
+                        <th scope="col">Actif</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for establishment in establishments %}
+                    <tr>
+                        <th scope="row" style="width: 9%;">{{ establishment.id }}.</th>
+                        <td>
+                            <a href="{{ path('admin_establishment_edit', {'id': establishment.id}) }}">
+                                {{ establishment.label }}
+                            </a>
+                        </td>
+                        <td style="width: 9%">
+                            <div class="custom-control custom-switch">
+                                {% set establishment_enable = "" %}
+                                {% if establishment.enable %}
+                                    {% set establishment_enable = "checked" %}
+                                {% endif %}
+                                <input type="checkbox" class="establishment-enable custom-control-input" id="establishment_{{ establishment.id }}_enable" {{ establishment_enable }}
+                                       data-enable-url="{{ path('admin_establishment_ajax_enable', {'id': establishment.id}) }}"
+                                       data-disable-url="{{ path('admin_establishment_ajax_disable', {'id': establishment.id}) }}"
+                                >
+                                <label class="custom-control-label" for="establishment_{{ establishment.id }}_enable"></label>
+                            </div>
+                        </td>
+                        <td class="text-right" style="width: 9%;">
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="navigation">
+            {{ knp_pagination_render(establishments) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('.establishment-enable').change(function(){
+            let url = '';
+            let $checkbox = $(this);
+            if($(this).is(':checked')){
+                url = $checkbox.data('enable-url');
+                $.get(
+                    url
+                ).done(function (response) {
+                    if(!handleAjaxResponse(response))
+                    {
+                        $checkbox.prop('checked', false);
+                    }
+                }).fail(function () {
+                    $checkbox.prop('checked', false);
+                });
+            }else{
+                url = $(this).data('disable-url');
+                $.get(
+                    url
+                ).done(function (response) {
+                    if(!handleAjaxResponse(response))
+                    {
+                        $checkbox.prop('checked', false);
+                    }
+                }).fail(function () {
+                    $checkbox.prop('checked', false);
+                });
+            }
+        });
+    </script>
+{% endblock %}

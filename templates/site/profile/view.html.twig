@@ -1,0 +1,73 @@
+{% extends 'site/layout.html.twig' %}
+
+{% block main %}
+    <div class="container" style="padding-top: 70px;">
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h5>Mes informations</h5>
+                    </div>
+                    <div class="col-sm-4 text-right">
+                        <button type="button" class="modal-action btn btn-primary"
+                                data-action-title="Modifier les informations"
+                                data-action-url="{{ path('profile_ajax_edit') }}"
+                        >
+                            Modifier mes infos
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <dl>
+                    <dt>Nom</dt>
+                    <dd>{{ app.user.lastname }}</dd>
+                </dl>
+                <dl>
+                    <dt>Prénom</dt>
+                    <dd>{{ app.user.firstname }}</dd>
+                </dl>
+                <dl>
+                    <dt>Email</dt>
+                    <dd>{{ app.user.email }}</dd>
+                </dl>
+                <dl>
+                    <dt>Profils</dt>
+                    <dd>
+                        {% set roles = '' %}
+                        {% for role in app.user.roles %}
+                            {% set roles = roles ~ helper.get('role').getLabel(role) ~ ', ' %}
+                        {% endfor %}
+                        {{ roles|trim(', ', 'right') }}
+                    </dd>
+                </dl>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h5>Gestion du mot de passe</h5>
+            </div>
+            <div class="card-body">
+                <button type="button" class="modal-action btn btn-block btn-primary"
+                        data-action-title="Modifier le mot de passe"
+                        data-action-url="{{ path('profile_ajax_password') }}"
+                >
+                    Modifier mon mot de passe
+                </button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h5>Gestion du compte</h5>
+            </div>
+            <div class="card-body">
+                <button type="button" class="modal-action btn btn-block btn-danger"
+                        data-action-title="Supprimer le compte"
+                        data-action-url="{{ path('profile_ajax_remove') }}"
+                >
+                    Je souhaite supprimer mon compte
+                </button>
+            </div>
+        </div>
+    </div>
+{% endblock %}

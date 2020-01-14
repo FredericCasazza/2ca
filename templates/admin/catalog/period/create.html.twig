@@ -1,0 +1,17 @@
+{{ form_start(form, {'attr': {'class': 'modal-action-form', 'data-action-url': path('admin_period_ajax_create') }}) }}
+    {{ form_row(form.label) }}
+    {{ form_row(form.startTime) }}
+    <div class="form-group">
+        {{ form_label(form.bookTimeLimit) }}
+        <i class="fas fa-question-circle" data-toggle="tooltip" title="Correspond au nombre d'heures qui seront retranchées à l'heure de début du service afin de déterminer l'heure limite de réservation (ex: si l'heure de début du service est 19:00 et que vous souhaitez autoriser les réservations jusqu'à 17:00 vous devez renseigner 2)" ></i>
+        {{ form_widget(form.bookTimeLimit) }}
+    </div>
+    {{ form_row(form.position) }}
+    <button type="submit" class="btn btn-block btn-primary">Enregistrer</button>
+{{ form_end(form) }}
+
+<script>
+    $(document).ready(function () {
+        $('.fa-question-circle').tooltip();
+    });
+</script>

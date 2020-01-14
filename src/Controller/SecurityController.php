@@ -163,7 +163,6 @@ class SecurityController extends AbstractController
         $token,
         Request $request,
         UserManager $userManager,
-        UserPasswordEncoderInterface $userPasswordEncoder,
         IsExpiredReinitTokenUserSpecification $expiredReinitTokenUserSpecification
     )
     {
@@ -190,10 +189,7 @@ class SecurityController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid())
         {
-            $password = $form->get('plainTextPassword')->getData();
-            $user->setPassword($userPasswordEncoder->encodePassword($user, $password))
-                ->setReinitToken(null)
-                ->setReinitExpirationDate(null);
+            $user = $form->getData();
             $userManager->update($user);
 
             return $this->render('security/reinitialization_password_success.html.twig');

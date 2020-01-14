@@ -1,0 +1,132 @@
+<?php
+
+
+namespace App\Controller\Site;
+
+
+use App\Form\ProfilePasswordType;
+use App\Form\ProfileType;
+use App\Manager\UserManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+
+/**
+ * Class ProfileController
+ * @package App\Controller\Site
+ */
+class ProfileController extends AbstractController
+{
+
+    /**
+     * @Route("/profile", name="profile")
+     */
+    public function view()
+    {
+        return $this->render('site/profile/view.html.twig');
+    }
+
+    /**
+     * @Route("/profile/ajax_edit", name="profile_ajax_edit")
+     * @param Request $request
+     * @param UserManager $userManager
+     * @return JsonResponse
+     */
+    public function ajaxEdit(Request $request, UserManager $userManager)
+    {
+        $status = true;
+        $message = null;
+
+        $user = $this->getUser();
+
+        $form = $this->createForm(ProfileType::class, $user);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted())
+        {
+            if($form->isValid()) {
+                $user = $form->getData();
+                $userManager->update($user);
+            }else{
+                $status = false;
+                $message = ['type' => 'none'];
+            }
+        }
+
+        $render = $this->get('twig')->render('site/profile/edit.html.twig', [
+            'form' => $form->createView()
+        ]);
+
+        return $this->json([
+            'status' => $status,
+            'content' => $render,
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * @Route("/profile/password", name="profile_ajax_password")
+     * @param Request $request
+     * @param UserManager $userManager
+     * @return JsonResponse
+     */
+    public function ajaxPassword(Request $request, UserManager $userManager)
+    {
+        $status = true;
+        $message = null;
+
+        $user = $this->getUser();
+        $form = $this->createForm(ProfilePasswordType::class, $user);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted())
+        {
+            $user = $form->getData();
+            $oldPassword = $form->get('oldPassword')->getData();
+
+            if (!$userManager->checkPassword($user, $oldPassword)) {
+                $form->get('oldPassword')->addError(new FormError("Le mot de passe actuel est incorrect"));
+            }
+
+            if($form->isValid())
+            {
+                $userManager->update($user);
+            }
+            else
+            {
+                $status = false;
+                $message = ['type' => 'none'];
+            }
+        }
+
+        $render = $this->get('twig')->render('site/profile/password.html.twig', [
+            'form' => $form->createView()
+        ]);
+
+        return $this->json([
+            'status' => $status,
+            'content' => $render,
+            'message' => $message
+        ]);
+    }
+
+    /**
+     * @Route("/profile/remove", name="profile_ajax_remove")
+     */
+    public function remove()
+    {
+        $status = true;
+        $message = null;
+
+        $render = $this->get('twig')->render('site/profile/remove.html.twig', [
+        ]);
+
+        return $this->json([
+            'status' => $status,
+            'content' => $render,
+            'message' => $message
+        ]);
+    }
+}

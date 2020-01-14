@@ -4,6 +4,7 @@
 namespace App\Manager;
 
 use App\Entity\Period;
+use App\Event\Period\CreatePeriodEvent;
 use App\Event\Period\DisablePeriodEvent;
 use App\Event\Period\EnablePeriodEvent;
 use App\Event\Period\UpdatePeriodEvent;
@@ -75,6 +76,14 @@ class PeriodManager extends AbstractManager
         $this->eventDispatcher->dispatch($event);
     }
 
+    /**
+     * @param Period $period
+     */
+    public function create(Period $period)
+    {
+        $event = new CreatePeriodEvent($period);
+        $this->eventDispatcher->dispatch($event);
+    }
 
     /**
      * @param Period $period

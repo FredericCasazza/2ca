@@ -20,10 +20,13 @@
                         {{ app.user.firstname ~ ' ' ~ app.user.lastname }}
                     </a>
                     <div class="dropdown-menu" aria-labelledby="user-dropdown-link">
-                        {% if is_granted('ROLE_CLIENT') %}
-                            <a class="dropdown-item" href="{{ path('admin_meals') }}">Administration</a>
-                            <div class="dropdown-divider"></div>
+                        {% if is_granted('ROLE_USER') %}
+                            <a class="dropdown-item" href="{{ path('profile') }}">Mon profil</a>
                         {% endif %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a class="dropdown-item" href="{{ path('admin_meals') }}">Administration</a>
+                        {% endif %}
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ path('app_logout') }}">Déconnexion</a>
                     </div>
                 </li>

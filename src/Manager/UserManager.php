@@ -39,7 +39,8 @@ class UserManager extends AbstractManager
     public function __construct(
         UserPasswordEncoderInterface $userPasswordEncoder,
         UserRepository $userRepository,
-        EventDispatcherInterface $eventDispatcher)
+        EventDispatcherInterface $eventDispatcher
+    )
     {
         $this->userPasswordEncoder = $userPasswordEncoder;
         $this->userRepository = $userRepository;
@@ -123,7 +124,22 @@ class UserManager extends AbstractManager
     {
         $user->addRole(Role::ROLE_USER);
 
+        if(!empty($user->getPlainTextPassword()))
+        {
+            $user->setPassword($this->userPasswordEncoder->encodePassword($user, $user->getPlainTextPassword()));
+        }
+
         $event = new UpdateUserEvent($user);
         $this->eventDispatcher->dispatch($event);
+    }
+
+    /**
+     * @param User $user
+     * @param $password
+     * @return bool
+     */
+    public function checkPassword(User $user, $password)
+    {
+        return $this->userPasswordEncoder->isPasswordValid($user, $password);
     }
 }

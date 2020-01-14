@@ -11,7 +11,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  * Class UpdatePeriodEvent
  * @package App\Event\Order
  */
-class UpdatePeriodEvent extends Event
+class CreatePeriodEvent extends Event
 {
 
     /**
@@ -20,7 +20,7 @@ class UpdatePeriodEvent extends Event
     private $period;
 
     /**
-     * UpdatePeriodEvent constructor.
+     * CreatePeriodEvent constructor.
      * @param Period $period
      */
     public function __construct(Period $period)

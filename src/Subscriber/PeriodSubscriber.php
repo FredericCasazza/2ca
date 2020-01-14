@@ -4,6 +4,7 @@
 namespace App\Subscriber;
 
 
+use App\Event\Period\CreatePeriodEvent;
 use App\Event\Period\DisablePeriodEvent;
 use App\Event\Period\EnablePeriodEvent;
 use App\Event\Period\UpdatePeriodEvent;
@@ -46,6 +47,9 @@ class PeriodSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
+            CreatePeriodEvent::class => [
+                ['create', 20]
+            ],
             UpdatePeriodEvent::class => [
                 ['update', 20]
             ],
@@ -56,6 +60,17 @@ class PeriodSubscriber implements EventSubscriberInterface
                 ['disable', 20]
             ],
         ];
+    }
+
+    /**
+     * @param CreatePeriodEvent $event
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function create(CreatePeriodEvent $event)
+    {
+        $period = $event->getPeriod();
+        $this->periodRepository->create($period);
     }
 
     /**

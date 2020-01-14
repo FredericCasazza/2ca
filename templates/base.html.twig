@@ -149,7 +149,7 @@
                     url,
                     data
                 ).done(function(response){
-                    if(handleAjaxResponse(response))
+                    if(handleAjaxResponse(response, $modal_app_body))
                     {
                         $modal_app.modal('hide');
                         document.location.reload();
@@ -198,7 +198,7 @@
 
             if(!navigator.cookieEnabled)
             {
-            $('body').append('<div class="fixed-bottom bg-danger text-center shadow" style="min-height: 4rem; opacity: 0.9;"><h4><u>Ce site ne peut pas fonctionner sans cookies. Veuillez activer les cookies dans les paramètres de votre navigateur.</u></h4></div>');
+                $('body').append('<div class="fixed-bottom bg-danger text-center shadow" style="min-height: 4rem; opacity: 0.9;"><h4><u>Ce site ne peut pas fonctionner sans cookies. Veuillez activer les cookies dans les paramètres de votre navigateur.</u></h4></div>');
             }
 
         });
@@ -231,7 +231,7 @@
             $.get(
                 url
             ).done(function(response){
-                if(handleAjaxResponse(response)) {
+                if(handleAjaxResponse(response, $modal_app_body)) {
                     $modal_app_title.html(title);
                     $modal_app_body.html(response.content);
                     $modal_app.modal('show');
@@ -243,14 +243,32 @@
         /**
          *
          * @param response
+         * @param $modal_app_body
          */
-        function handleAjaxResponse(response)
+        function handleAjaxResponse(response, $modal_app_body)
         {
             let status = (response.status) ? response.status : false;
-            let content = (response.content) ? response.content : "Une erreur est survenue";
+            let content = (response.content) ? response.content : null;
+            let message = (response.message)? response.message : null;
             if(response.status !== true)
             {
-                showAlert('danger', content);
+                let type = 'danger';
+                let text = "Une erreur est survenue";
+
+                if(message)
+                {
+                    type = (message.type)? message.type : type;
+                    text = (message.text)? message.text : text;
+                    if(content && $modal_app_body) $modal_app_body.html(content);
+                }
+                else
+                {
+                    text = (content)? content : text;
+                }
+                if(type !== 'none')
+                {
+                    showAlert(type, text);
+                }
             }
             return status;
         }

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PeriodRepository")
@@ -18,6 +19,10 @@ class Period
 
     /**
      * @ORM\Column(type="string", length=25)
+     * @Assert\Length(
+     *     min = 2,
+     *     minMessage = "L'intitulé doit comporter {{ limit }} lettres minimum"
+     * )
      */
     private $label;
 
@@ -69,9 +74,9 @@ class Period
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return \DateTimeInterface|null
      */
-    public function getStartTime(): \DateTimeInterface
+    public function getStartTime(): ?\DateTimeInterface
     {
         return $this->startTime;
     }

@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Period;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
@@ -40,15 +42,27 @@ class PeriodRepository extends ServiceEntityRepository
     public function paginate($page, $limit)
     {
         $qb = $this->createQueryBuilder('p');
-        $qb->addOrderBy('p.position', 'ASC');
+        $qb->addOrderBy('p.position', 'ASC')
+            ->addOrderBy('p.label', 'ASC');
 
         return $this->paginator->paginate($qb, $page, $limit);
     }
 
     /**
      * @param Period $period
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function create(Period $period)
+    {
+        $this->_em->persist($period);
+        $this->_em->flush();
+    }
+
+    /**
+     * @param Period $period
+     * @throws ORMException
+     * @throws OptimisticLockException
      */
     public function update(Period $period)
     {

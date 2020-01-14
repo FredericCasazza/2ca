@@ -25,7 +25,7 @@ import 'admin-lte';
 import 'tempusdominus-bootstrap-4';
 
 // Import Fontawesome
-import '@fortawesome/fontawesome-free/js/all.min';
+//import '@fortawesome/fontawesome-free/js/all.min';
 
 // Import Bootbox
 const bootbox = require('bootbox');

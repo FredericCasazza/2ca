@@ -99,14 +99,20 @@ class BookingController extends AbstractController
     /**
      * @Route("/booking/not_customer", name="booking_not_customer")
      * @param Request $request
+     * @param RoleHelper $roleHelper
      * @param CustomerRequestManager $customerRequestManager
      * @return Response
      * @throws \Exception
      */
-    public function notCustomer(Request $request, CustomerRequestManager $customerRequestManager)
+    public function notCustomer(Request $request, RoleHelper $roleHelper, CustomerRequestManager $customerRequestManager)
     {
         /** @var User $user */
         $user = $this->getUser();
+
+        if($roleHelper->isGranted($user, Role::ROLE_CLIENT) && $user->getEstablishment() instanceof Establishment)
+        {
+            return $this->redirectToRoute('booking');
+        }
 
         $customerRequest = $customerRequestManager->findByUser($user);
 

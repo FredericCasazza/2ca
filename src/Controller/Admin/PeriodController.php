@@ -115,4 +115,40 @@ class PeriodController extends AbstractController
             'content' => null,
         ]);
     }
+
+    /**
+     * @Route("/admin/period/ajax_create", name="admin_period_ajax_create")
+     * @param Request $request
+     * @param PeriodManager $periodManager
+     * @return Response
+     */
+    public function ajaxCreate(Request $request, PeriodManager $periodManager)
+    {
+        $period = new Period();
+
+        $form = $this->createForm(PeriodType::class, $period);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $period = $form->getData();
+            $periodManager->create($period);
+
+            return $this->json([
+                'status' => true,
+                'content' => null,
+            ]);
+
+        }
+
+        $render = $this->get('twig')->render('admin/catalog/period/create.html.twig', [
+            'form' => $form->createView()
+        ]);
+
+        return $this->json([
+            'status' => true,
+            'content' => $render,
+        ]);
+
+    }
 }
