@@ -1,0 +1,108 @@
+{% extends 'admin/catalog/dish_category/layout.html.twig' %}
+
+{% block main %}
+    <div class="toolbar sticky-top">
+        <div class="row">
+            <div class="col">
+                <h3>Liste des types de plats</h3>
+            </div>
+            <div class="col">
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="modal-action btn btn-primary"
+                            data-action-title="Ajouter un type de plat"
+                            data-action-url="{{ path('admin_dish_category_ajax_create') }}"
+                    >
+                        Ajouter un type de plat
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid ">
+
+        {% include 'common/form_filter.html.twig' %}
+
+        <div class="card table-responsive">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col" class="sortable">{{ knp_pagination_sortable(dishCategories, '#', 'dc.id') }}</th>
+                    <th scope="col" class="sortable">{{ knp_pagination_sortable(dishCategories, 'Intitulé', 'dc.label') }}</th>
+                    <th scope="col" class="sortable">{{ knp_pagination_sortable(dishCategories, 'Position', 'dc.position') }}</th>
+                    <th scope="col">Actif</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for dishCategory in dishCategories %}
+                    <tr>
+                        <th scope="row" style="width: 9%;">{{ dishCategory.id }}.</th>
+                        <td>
+                            <a href="{{ path('admin_dish_category', {'id': dishCategory.id}) }}">
+                                {{ dishCategory.label }}
+                            </a>
+                        </td>
+                        <td class="text-center" style="width: 9%;">
+                            {{ dishCategory.position }}
+                        </td>
+                        <td style="width: 9%">
+                            <div class="custom-control custom-switch">
+                                {% set dish_category_enable = "" %}
+                                {% if dishCategory.enable %}
+                                    {% set dish_category_enable = "checked" %}
+                                {% endif %}
+                                <input type="checkbox" class="dish-category-enable custom-control-input" id="dish_category_{{ dishCategory.id }}_enable" {{ dish_category_enable }}
+                                       data-enable-url="{{ path('admin_dish_category_ajax_enable', {'id': dishCategory.id}) }}"
+                                       data-disable-url="{{ path('admin_dish_category_ajax_disable', {'id': dishCategory.id}) }}"
+                                >
+                                <label class="custom-control-label" for="dish_category_{{ dishCategory.id }}_enable"></label>
+                            </div>
+                        </td>
+                        <td class="text-right" style="width: 9%;">
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="navigation">
+            {{ knp_pagination_render(dishCategories) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('.dish-category-enable').change(function(){
+            let url = '';
+            let $checkbox = $(this);
+            if($(this).is(':checked')){
+                url = $checkbox.data('enable-url');
+                $.get(
+                    url
+                ).done(function (response) {
+                    if(!handleAjaxResponse(response))
+                    {
+                        $checkbox.prop('checked', false);
+                    }
+                }).fail(function () {
+                    $checkbox.prop('checked', false);
+                });
+            }else{
+                url = $(this).data('disable-url');
+                $.get(
+                    url
+                ).done(function (response) {
+                    if(!handleAjaxResponse(response))
+                    {
+                        $checkbox.prop('checked', false);
+                    }
+                }).fail(function () {
+                    $checkbox.prop('checked', false);
+                });
+            }
+        });
+    </script>
+{% endblock %}

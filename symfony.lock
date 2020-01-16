@@ -129,6 +129,9 @@
     "knplabs/knp-paginator-bundle": {
         "version": "v5.0.0"
     },
+    "lexik/form-filter-bundle": {
+        "version": "v6.0.1"
+    },
     "monolog/monolog": {
         "version": "1.25.2"
     },

@@ -7,9 +7,13 @@ namespace App\Controller\Admin;
 use App\Entity\Dish;
 use App\Entity\User;
 use App\Form\DishRemoveType;
+use App\Form\Filter\UserFilterType;
 use App\Form\UserType;
 use App\Manager\DishManager;
 use App\Manager\UserManager;
+use App\Repository\UserRepository;
+use Knp\Component\Pager\PaginatorInterface;
+use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,14 +30,34 @@ class UserController extends AbstractController
     /**
      * @Route("/admin/user", name="admin_users")
      * @param Request $request
-     * @param UserManager $userManager
+     * @param UserRepository $userRepository
+     * @param PaginatorInterface $paginator
+     * @param FilterBuilderUpdaterInterface $filterBuilderUpdater
      * @return Response
      */
-    public function list(Request $request, UserManager $userManager)
+    public function list(
+        Request $request,
+        UserRepository $userRepository,
+        PaginatorInterface $paginator,
+        FilterBuilderUpdaterInterface $filterBuilderUpdater
+    )
     {
-        $users = $userManager->paginate($request->query->getInt('page', 1), 15);
+
+        $form = $this->createForm(UserFilterType::class);
+
+        $qb = $userRepository->createQueryBuilder('u')
+            ->addOrderBy('u.lastname', 'asc')
+            ->addOrderBy('u.firstname', 'asc');
+
+        if ($request->query->has($form->getName())) {
+            $form->submit($request->query->get($form->getName()));
+            $filterBuilderUpdater->addFilterConditions($form, $qb);
+        }
+
+        $users = $paginator->paginate($qb, $request->query->getInt('page', 1), 15);
 
         return $this->render('admin/administration/user/list.html.twig', [
+            'form' => $form->createView(),
             'users' => $users
         ]);
     }

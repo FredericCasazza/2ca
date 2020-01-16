@@ -3,6 +3,7 @@
 
 namespace App\Manager;
 
+use App\Entity\Dish;
 use App\Entity\Establishment;
 use App\Entity\Meal;
 use App\Event\Meal\CreateMealEvent;
@@ -24,16 +25,24 @@ class MealManager extends AbstractManager
     private $mealRepository;
 
     /**
+     * @var DishCategoryManager
+     */
+    private $dishCategoryManager;
+
+    /**
      * MealManager constructor.
      * @param EventDispatcherInterface $eventDispatcher
      * @param MealRepository $mealRepository
+     * @param DishCategoryManager $dishCategoryManager
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
-        MealRepository $mealRepository
+        MealRepository $mealRepository,
+        DishCategoryManager $dishCategoryManager
     )
     {
         $this->mealRepository = $mealRepository;
+        $this->dishCategoryManager = $dishCategoryManager;
         parent::__construct($eventDispatcher);
     }
 
@@ -44,16 +53,6 @@ class MealManager extends AbstractManager
     public function find($id)
     {
         return $this->mealRepository->find($id);
-    }
-
-    /**
-     * @param $page
-     * @param $limit
-     * @return PaginationInterface
-     */
-    public function paginate($page, $limit)
-    {
-        return $this->mealRepository->paginate($page, $limit);
     }
 
     /**
@@ -101,6 +100,19 @@ class MealManager extends AbstractManager
         $meal->setBookDateLimit($bookDateLimit)
             ->setCreationDate($currentDate)
             ->setModificationDate($currentDate);
+
+        $dishCategories = $this->dishCategoryManager->findEnableOrderedByPosition();
+        foreach ($dishCategories as $dishCategory)
+        {
+            foreach ($dishCategory->getDishes() as $label)
+            {
+                $dish = new Dish();
+                $dish->setLabel($label)
+                    ->setCategory($dishCategory);
+                $meal->addDish($dish);
+            }
+        }
+
         $event = new CreateMealEvent($meal);
         $this->eventDispatcher->dispatch($event);
     }

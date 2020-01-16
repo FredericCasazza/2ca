@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Constant\Role;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -33,7 +34,7 @@ class UserFixture extends Fixture
             ->setLastname('2CA')
             ->setFirstname('Administrator')
             ->setPassword($this->userPasswordEncoder->encodePassword($user, 'Administrator'))
-            ->setRoles(['ROLE_USER']);
+            ->addRole(Role::ROLE_ADMIN);
 
         $manager->persist($user);
         $manager->flush();

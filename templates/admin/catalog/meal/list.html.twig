@@ -20,13 +20,16 @@
     </div>
 
     <div class="container-fluid ">
+
+        {% include 'common/form_filter.html.twig' %}
+
         <div class="card table-responsive">
             <table class="table">
                 <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Repas</th>
+                    <th scope="col" class="sortable">{{ knp_pagination_sortable(meals, '#', 'm.id') }}</th>
+                    <th scope="col" class="sortable">{{ knp_pagination_sortable(meals, 'Date', 'm.date') }}</th>
+                    <th scope="col" class="sortable">{{ knp_pagination_sortable(meals, 'Repas', 'p.label') }}</th>
                     <th scope="col">Etablissements</th>
                     <th scope="col">Publié</th>
                     <th scope="col"></th>
@@ -63,17 +66,20 @@
                             </div>
                         </td>
                         <td class="text-right">
-                            {#
                             <div class="dropdown dropdown-actions">
                                 <button class="btn btn-link dropdown-toggle" type="button" id="meal_{{ meal.id }}_actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-ellipsis-v"></i>
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="meal_{{ meal.id }}_actions">
-                                    <a class="dropdown-item" href="#">Dupliquer</a>
-                                    <a class="dropdown-item" href="#">Supprimer</a>
+                                    <button class="dropdown-item modal-action"
+                                            data-action-title="Dupliquer le menu du {{ meal.date|localdate('long') }} ({{ meal.period.label }})"
+                                            data-action-url="{{ path('admin_meal_ajax_duplicate', {'id': meal.id}) }}"
+                                    >
+                                        Dupliquer
+                                    </button>
+                                    {#<a class="dropdown-item" href="#">Supprimer</a>#}
                                 </div>
                             </div>
-                            #}
                         </td>
                     </tr>
                 {% endfor %}

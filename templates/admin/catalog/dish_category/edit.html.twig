@@ -1,0 +1,6 @@
+{{ form_start(form, {'attr': {'class': 'modal-action-form', 'data-action-url': path('admin_dish_category_ajax_edit', {'id': form.vars.data.id}) }}) }}
+{{ form_row(form.label) }}
+{{ form_row(form.dishLimit) }}
+{{ form_row(form.position) }}
+<button type="submit" class="btn btn-block btn-primary" id="create_button">Enregistrer</button>
+{{ form_end(form) }}

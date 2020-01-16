@@ -4,6 +4,10 @@
 namespace App\Manager;
 
 use App\Entity\DishCategory;
+use App\Event\DishCategory\CreateDishCategoryEvent;
+use App\Event\DishCategory\DisableDishCategoryEvent;
+use App\Event\DishCategory\EnableDishCategoryEvent;
+use App\Event\DishCategory\UpdateDishCategoryEvent;
 use App\Repository\DishCategoryRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -55,6 +59,44 @@ class DishCategoryManager extends AbstractManager
                 'label' => 'ASC'
             ]
         );
+    }
+
+    /**
+     * @param DishCategory $establishment
+     */
+    public function enable(DishCategory $establishment)
+    {
+        $establishment->setEnable(true);
+        $event = new EnableDishCategoryEvent($establishment);
+        $this->eventDispatcher->dispatch($event);
+    }
+
+    /**
+     * @param DishCategory $establishment
+     */
+    public function disable(DishCategory $establishment)
+    {
+        $establishment->setEnable(false);
+        $event = new DisableDishCategoryEvent($establishment);
+        $this->eventDispatcher->dispatch($event);
+    }
+
+    /**
+     * @param DishCategory $establishment
+     */
+    public function create(DishCategory $establishment)
+    {
+        $event = new CreateDishCategoryEvent($establishment);
+        $this->eventDispatcher->dispatch($event);
+    }
+
+    /**
+     * @param DishCategory $establishment
+     */
+    public function update(DishCategory $establishment)
+    {
+        $event = new UpdateDishCategoryEvent($establishment);
+        $this->eventDispatcher->dispatch($event);
     }
 
 }

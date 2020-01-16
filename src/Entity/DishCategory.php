@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -29,12 +30,17 @@ class DishCategory
     /**
      * @ORM\Column(type="integer", nullable=false)
      */
-    private $limit = 1;
+    private $dishLimit = 0;
 
     /**
      * @ORM\Column(type="boolean", nullable=false)
      */
     private $enable = true;
+
+    /**
+     * @ORM\Column(type="json")
+     */
+    private $dishes = [];
 
     /**
      * @return int|null
@@ -85,18 +91,18 @@ class DishCategory
     /**
      * @return int
      */
-    public function getLimit(): int
+    public function getDishLimit(): int
     {
-        return $this->limit;
+        return $this->dishLimit;
     }
 
     /**
-     * @param int $limit
+     * @param int $dishLimit
      * @return DishCategory
      */
-    public function setLimit(int $limit): DishCategory
+    public function setDishLimit(int $dishLimit): DishCategory
     {
-        $this->limit = $limit;
+        $this->dishLimit = $dishLimit;
         return $this;
     }
 
@@ -116,6 +122,41 @@ class DishCategory
     {
         $this->enable = $enable;
 
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDishes(): array
+    {
+        return $this->dishes;
+    }
+
+    /**
+     * @param string $dish
+     * @return $this
+     */
+    public function addDish(string $dish): self
+    {
+        $key = md5($dish);
+        if(!in_array($dish, $this->dishes))
+        {
+            $this->dishes[$key] = $dish;
+        }
+        return $this;
+    }
+
+    /**
+     * @param string $key
+     * @return $this
+     */
+    public function removeDish(string $key): self
+    {
+        if(array_key_exists($key, $this->dishes))
+        {
+            unset($this->dishes[$key]);
+        }
         return $this;
     }
 }

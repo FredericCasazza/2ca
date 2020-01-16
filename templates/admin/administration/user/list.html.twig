@@ -17,14 +17,17 @@
     </div>
 
     <div class="container-fluid pt-2">
+
+        {% include 'common/form_filter.html.twig' %}
+
         <div class="card table-responsive">
             <table class="table">
                 <thead>
                 <tr>
-                    <th class="col-auto">#</th>
-                    <th>Nom</th>
-                    <th>Prénom</th>
-                    <th>Email</th>
+                    <th scope="col" class="sortable">{{ knp_pagination_sortable(users, '#', 'u.id') }}</th>
+                    <th scope="col" class="sortable">{{ knp_pagination_sortable(users, 'Nom', 'u.lastname') }}</th>
+                    <th scope="col" class="sortable">{{ knp_pagination_sortable(users, 'Prénom', 'u.firstname') }}</th>
+                    <th scope="col" class="sortable">{{ knp_pagination_sortable(users, 'Email', 'u.email') }}</th>
                     <th>Rôles</th>
                     <th class="col-auto"></th>
                 </tr>

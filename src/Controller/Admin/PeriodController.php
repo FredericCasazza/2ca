@@ -5,8 +5,12 @@ namespace App\Controller\Admin;
 
 
 use App\Entity\Period;
+use App\Form\Filter\PeriodFilterType;
 use App\Form\PeriodType;
 use App\Manager\PeriodManager;
+use App\Repository\PeriodRepository;
+use Knp\Component\Pager\PaginatorInterface;
+use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,16 +25,36 @@ class PeriodController extends AbstractController
     /**
      * @Route("/admin/period", name="admin_periods")
      * @param Request $request
-     * @param PeriodManager $periodManager
+     * @param PeriodRepository $periodRepository
+     * @param PaginatorInterface $paginator
+     * @param FilterBuilderUpdaterInterface $filterBuilderUpdater
      * @return Response
      */
-    public function list(Request $request, PeriodManager $periodManager)
+    public function list(
+        Request $request,
+        PeriodRepository $periodRepository,
+        PaginatorInterface $paginator,
+        FilterBuilderUpdaterInterface $filterBuilderUpdater
+    )
     {
-        $periods = $periodManager->paginate($request->query->getInt('page', 1), 15);
+        $form = $this->createForm(PeriodFilterType::class);
+
+        $qb = $periodRepository->createQueryBuilder('p');
+        $qb->addOrderBy('p.position', 'ASC')
+            ->addOrderBy('p.label', 'ASC');
+
+        if ($request->query->has($form->getName())) {
+            $form->submit($request->query->get($form->getName()));
+            $filterBuilderUpdater->addFilterConditions($form, $qb);
+        }
+
+        $periods = $paginator->paginate($qb, $request->query->getInt('page', 1), 15);
 
         return $this->render('admin/catalog/period/list.html.twig', [
+            'form' => $form->createView(),
             'periods' => $periods
         ]);
+
     }
 
     /**

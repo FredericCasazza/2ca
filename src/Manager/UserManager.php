@@ -74,15 +74,6 @@ class UserManager extends AbstractManager
         return $this->userRepository->findByReinitToken($token);
     }
 
-    /**
-     * @param $page
-     * @param $limit
-     * @return PaginationInterface
-     */
-    public function paginate($page, $limit)
-    {
-        return $this->userRepository->paginate($page, $limit);
-    }
 
     /**
      * @param User $user

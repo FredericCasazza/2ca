@@ -5,11 +5,12 @@ namespace App\Controller\Admin;
 
 
 use App\Entity\Establishment;
-use App\Entity\Period;
 use App\Form\EstablishmentType;
-use App\Form\PeriodType;
+use App\Form\Filter\EstablishmentFilterType;
 use App\Manager\EstablishmentManager;
-use App\Manager\PeriodManager;
+use App\Repository\EstablishmentRepository;
+use Knp\Component\Pager\PaginatorInterface;
+use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,16 +25,36 @@ class EstablishmentController extends AbstractController
     /**
      * @Route("/admin/establishment", name="admin_establishments")
      * @param Request $request
-     * @param EstablishmentManager $establishmentManager
+     * @param EstablishmentRepository $establishmentRepository
+     * @param PaginatorInterface $paginator
+     * @param FilterBuilderUpdaterInterface $filterBuilderUpdater
      * @return Response
      */
-    public function list(Request $request, EstablishmentManager $establishmentManager)
+    public function list(
+        Request $request,
+        EstablishmentRepository $establishmentRepository,
+        PaginatorInterface $paginator,
+        FilterBuilderUpdaterInterface $filterBuilderUpdater
+    )
     {
-        $establishments = $establishmentManager->paginate($request->query->getInt('page', 1), 15);
+
+        $form = $this->createForm(EstablishmentFilterType::class);
+
+        $qb = $establishmentRepository->createQueryBuilder('e');
+        $qb->addOrderBy('e.label', 'ASC');
+
+        if ($request->query->has($form->getName())) {
+            $form->submit($request->query->get($form->getName()));
+            $filterBuilderUpdater->addFilterConditions($form, $qb);
+        }
+
+        $establishments = $paginator->paginate($qb, $request->query->getInt('page', 1), 15);
 
         return $this->render('admin/catalog/establishment/list.html.twig', [
+            'form' => $form->createView(),
             'establishments' => $establishments
         ]);
+
     }
 
     /**
@@ -60,6 +81,9 @@ class EstablishmentController extends AbstractController
             $establishmentManager->update($establishment);
 
             $this->addFlash('success', 'Modifications enregistrées avec succés.');
+            return $this->redirectToRoute('admin_establishment_edit', [
+                'id' => $id
+            ]);
         }
 
         return $this->render('admin/catalog/establishment/edit.html.twig', [

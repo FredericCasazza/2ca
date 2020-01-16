@@ -45,17 +45,7 @@ class PeriodManager extends AbstractManager
     {
         return $this->periodRepository->find($id);
     }
-
-    /**
-     * @param $page
-     * @param $limit
-     * @return PaginationInterface
-     */
-    public function paginate($page, $limit)
-    {
-        return $this->periodRepository->paginate($page, $limit);
-    }
-
+    
     /**
      * @param Period $period
      */

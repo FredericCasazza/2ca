@@ -3,7 +3,9 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
     exception_controller: null
-    form_themes: ['bootstrap_4_layout.html.twig']
+    form_themes:
+        - 'bootstrap_4_layout.html.twig'
+        - 'LexikFormFilterBundle:Form:form_div_layout.html.twig'
     globals:
         helper: '@App\Factory\HelperFactory'
 

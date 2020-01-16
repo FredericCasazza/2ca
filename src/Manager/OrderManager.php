@@ -73,16 +73,6 @@ class OrderManager extends AbstractManager
     }
 
     /**
-     * @param $page
-     * @param $limit
-     * @return mixed
-     */
-    public function paginate($page, $limit)
-    {
-        return $this->orderRepository->paginate($page, $limit);
-    }
-
-    /**
      * @param Order $order
      * @throws \Exception
      */

@@ -568,3 +568,59 @@ table tr.notification-checked {
     }
   }
 }
+
+/**
+ * Form filter
+ */
+.card-filter .card-header .fa {
+  transition: .3s transform ease-in-out;
+}
+.card-filter .card-header .collapsed .fa {
+  transform: rotate(90deg);
+}
+
+
+/**
+ * Pagination
+ */
+th.sortable {
+
+  position: relative;
+
+  a {
+    display: block;
+    width: 100%;
+    padding-right: 20px;
+    color: initial;
+
+    &:before, &:after {
+      position: absolute;
+      bottom: 0.9em;
+      display: block;
+      opacity: 0.3;
+    }
+
+    &:before {
+      right: 1em;
+      content: "\2191";
+    }
+
+    &:after {
+      right: 0.5em;
+      content: "\2193";
+    }
+
+    &.asc {
+      &:before {
+        opacity: 1;
+      }
+    }
+
+    &.desc {
+      &:after {
+        opacity: 1;
+      }
+    }
+
+  }
+}

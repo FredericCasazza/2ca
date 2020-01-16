@@ -7,11 +7,15 @@ namespace App\Controller\Admin;
 use App\Entity\Dish;
 use App\Entity\Meal;
 use App\Form\DishType;
+use App\Form\Filter\MealFilterType;
 use App\Form\MealEditType;
 use App\Form\MealType;
 use App\Manager\DishCategoryManager;
 use App\Manager\DishManager;
 use App\Manager\MealManager;
+use App\Repository\MealRepository;
+use Knp\Component\Pager\PaginatorInterface;
+use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,14 +32,33 @@ class MealController extends AbstractController
     /**
      * @Route("/admin/meal", name="admin_meals")
      * @param Request $request
-     * @param MealManager $mealManager
+     * @param MealRepository $mealRepository
+     * @param PaginatorInterface $paginator
+     * @param FilterBuilderUpdaterInterface $filterBuilderUpdater
      * @return Response
      */
-    public function list(Request $request, MealManager $mealManager)
+    public function list(
+        Request $request,
+        MealRepository $mealRepository,
+        PaginatorInterface $paginator,
+        FilterBuilderUpdaterInterface $filterBuilderUpdater
+    )
     {
-        $meals = $mealManager->paginate($request->query->getInt('page', 1), 15);
+        $form = $this->createForm(MealFilterType::class);
+
+        $qb = $mealRepository->createQueryBuilder('m')
+            ->innerJoin('m.period', 'p')
+            ->addOrderBy('m.date', 'desc');
+
+        if ($request->query->has($form->getName())) {
+            $form->submit($request->query->get($form->getName()));
+            $filterBuilderUpdater->addFilterConditions($form, $qb);
+        }
+
+        $meals = $paginator->paginate($qb, $request->query->getInt('page', 1));
 
         return $this->render('admin/catalog/meal/list.html.twig', [
+            'form' => $form->createView(),
             'meals' => $meals
         ]);
     }
@@ -251,6 +274,46 @@ class MealController extends AbstractController
             'status' => true,
             'content' => $render,
         ]);
+    }
+
+    /**
+     * @Route("/admin/meal/{id}/ajax_duplicate", name="admin_meal_ajax_duplicate")
+     * @param $id
+     * @param Request $request
+     * @param MealManager $mealManager
+     * @return Response
+     * @throws \Exception
+     */
+    public function ajaxDuplicate($id, Request $request, MealManager $mealManager)
+    {
+        $meal = $mealManager->find($id);
+        $meal = clone $meal;
+        $meal->setDate(new \DateTime());
+
+        $form = $this->createForm(MealType::class, $meal);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $meal = $form->getData();
+            $mealManager->create($meal);
+
+            return $this->json([
+                'status' => true,
+                'content' => null,
+            ]);
+
+        }
+
+        $render = $this->get('twig')->render('admin/catalog/meal/duplicate.html.twig', [
+            'form' => $form->createView()
+        ]);
+
+        return $this->json([
+            'status' => true,
+            'content' => $render,
+        ]);
+
     }
 
 }

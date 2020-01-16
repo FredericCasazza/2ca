@@ -20,14 +20,17 @@
     </div>
 
     <div class="container-fluid ">
+
+        {% include 'common/form_filter.html.twig' %}
+
         <div class="card table-responsive">
             <table class="table">
                 <thead>
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Intitulé</th>
-                    <th scope="col">Heure service</th>
-                    <th scope="col">Position</th>
+                    <th scope="col" class="sortable">{{ knp_pagination_sortable(periods, '#', 'p.id') }}</th>
+                    <th scope="col" class="sortable">{{ knp_pagination_sortable(periods, 'Intitulé', 'p.label') }}</th>
+                    <th scope="col" class="sortable">{{ knp_pagination_sortable(periods, 'Heure service', 'p.startTime') }}</th>
+                    <th scope="col" class="sortable">{{ knp_pagination_sortable(periods, 'Position', 'p.position') }}</th>
                     <th scope="col">Actif</th>
                     <th scope="col"></th>
                 </tr>
@@ -41,7 +44,9 @@
                                 {{ period.label }}
                             </a>
                         </td>
-                        <td></td>
+                        <td>
+                            {{ period.startTime|date('H:i') }}
+                        </td>
                         <td style="width: 9%;">
                             {{ period.position }}
                         </td>

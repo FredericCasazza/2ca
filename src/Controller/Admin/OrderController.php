@@ -6,15 +6,18 @@ namespace App\Controller\Admin;
 
 use App\Entity\Dish;
 use App\Entity\Order;
+use App\Form\Filter\OrderFilterType;
 use App\Form\PrintOrderType;
 use App\Manager\DishCategoryManager;
 use App\Manager\OrderManager;
+use App\Repository\OrderRepository;
+use Knp\Component\Pager\PaginatorInterface;
+use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdaterInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Tetranz\Select2EntityBundle\Service\AutocompleteService;
 
 /**
  * Class OrderController
@@ -26,16 +29,40 @@ class OrderController extends AbstractController
     /**
      * @Route("/admin/order", name="admin_orders")
      * @param Request $request
-     * @param OrderManager $orderManager
+     * @param OrderRepository $orderRepository
+     * @param PaginatorInterface $paginator
+     * @param FilterBuilderUpdaterInterface $filterBuilderUpdater
      * @return Response
      */
-    public function list(Request $request, OrderManager $orderManager)
+    public function list(
+        Request $request,
+        OrderRepository $orderRepository,
+        PaginatorInterface $paginator,
+        FilterBuilderUpdaterInterface $filterBuilderUpdater
+    )
     {
-        $orders = $orderManager->paginate($request->query->getInt('page', 1), 15);
+        $form = $this->createForm(OrderFilterType::class);
+
+        $qb = $orderRepository->createQueryBuilder('o')
+            ->innerJoin('o.meal', 'm')
+            ->addOrderBy('m.date', 'desc');
+
+        if ($request->query->has($form->getName())) {
+            $form->submit($request->query->get($form->getName()));
+            $filterBuilderUpdater->setParts([
+                '__root__' => 'o',
+                'o.meal' => 'm'
+            ]);
+            $filterBuilderUpdater->addFilterConditions($form, $qb);
+        }
+
+        $orders = $paginator->paginate($qb, $request->query->getInt('page', 1), 15);
 
         return $this->render('admin/order/list.html.twig', [
+            'form' => $form->createView(),
             'orders' => $orders
         ]);
+
     }
 
     /**

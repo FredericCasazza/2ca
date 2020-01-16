@@ -38,18 +38,16 @@
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ path('admin_periods') }}" class="nav-link {% if 'periods' in menusActive %} active {% endif %}">
-                                <i class="fas fa-utensils nav-icon"></i>
+                                <i class="fas fa-clock nav-icon"></i>
                                 <p>Repas</p>
                             </a>
                         </li>
-                        {#
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
+                            <a href="{{ path('admin_dish_categories') }}" class="nav-link {% if 'dish_categories' in menusActive %} active {% endif %}">
                                 <i class="fas fa-utensils nav-icon"></i>
                                 <p>Catégories de plats</p>
                             </a>
                         </li>
-                        #}
                         <li class="nav-item">
                             <a href="{{ path('admin_establishments') }}" class="nav-link {% if 'establishments' in menusActive %} active {% endif %}">
                                 <i class="fas fa-map-marked-alt nav-icon"></i>

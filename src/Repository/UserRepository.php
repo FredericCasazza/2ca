@@ -21,19 +21,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    /**
-     * @var PaginatorInterface
-     */
-    private $paginator;
 
     /**
      * UserRepository constructor.
      * @param ManagerRegistry $registry
-     * @param PaginatorInterface $paginator
      */
-    public function __construct(ManagerRegistry $registry, PaginatorInterface $paginator)
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->paginator = $paginator;
         parent::__construct($registry, User::class);
     }
 
@@ -70,20 +64,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function findByReinitToken($token)
     {
         return $this->findOneBy(['reinitToken' => $token]);
-    }
-
-    /**
-     * @param $page
-     * @param $limit
-     * @return PaginationInterface
-     */
-    public function paginate($page, $limit)
-    {
-        $qb = $this->createQueryBuilder('u');
-        $qb->addOrderBy('u.lastname', 'asc')
-            ->addOrderBy('u.firstname', 'asc');
-
-        return $this->paginator->paginate($qb, $page, $limit);
     }
 
     /**

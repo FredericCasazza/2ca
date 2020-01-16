@@ -4,7 +4,6 @@
 namespace App\Event\Establishment;
 
 use App\Entity\Establishment;
-use App\Entity\Period;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**

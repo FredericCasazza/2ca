@@ -8,9 +8,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use Knp\Component\Pager\Pagination\PaginationInterface;
-use Knp\Component\Pager\PaginatorInterface;
-use function Doctrine\ORM\QueryBuilder;
 
 /**
  * @method Meal|null find($id, $lockMode = null, $lockVersion = null)
@@ -21,36 +18,16 @@ use function Doctrine\ORM\QueryBuilder;
 class MealRepository extends ServiceEntityRepository
 {
     /**
-     * @var PaginatorInterface
-     */
-    private $paginator;
-
-    /**
      * MealRepository constructor.
      * @param ManagerRegistry $registry
-     * @param PaginatorInterface $paginator
      */
     public function __construct(
-        ManagerRegistry $registry,
-        PaginatorInterface $paginator
+        ManagerRegistry $registry
     )
     {
-        $this->paginator = $paginator;
         parent::__construct($registry, Meal::class);
     }
 
-    /**
-     * @param $page
-     * @param $limit
-     * @return PaginationInterface
-     */
-    public function paginate($page, $limit)
-    {
-        $qb = $this->createQueryBuilder('m');
-        $qb->addOrderBy('m.date', 'desc');
-
-        return $this->paginator->paginate($qb, $page, $limit);
-    }
 
     /**
      * @param \DateTime $date

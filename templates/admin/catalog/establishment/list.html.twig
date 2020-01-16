@@ -20,12 +20,15 @@
     </div>
 
     <div class="container-fluid ">
+
+        {% include 'common/form_filter.html.twig' %}
+
         <div class="card table-responsive">
             <table class="table">
                 <thead>
                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Intitulé</th>
+                        <th scope="col" class="sortable">{{ knp_pagination_sortable(establishments, '#', 'e.id') }}</th>
+                        <th scope="col" class="sortable">{{ knp_pagination_sortable(establishments, 'Etablissement', 'e.label') }}</th>
                         <th scope="col">Actif</th>
                         <th scope="col"></th>
                     </tr>

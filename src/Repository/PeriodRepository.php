@@ -7,8 +7,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
-use Knp\Component\Pager\Pagination\PaginationInterface;
-use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @method Period|null find($id, $lockMode = null, $lockVersion = null)
@@ -18,34 +16,14 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class PeriodRepository extends ServiceEntityRepository
 {
-    /**
-     * @var PaginatorInterface
-     */
-    private $paginator;
 
     /**
      * PeriodRepository constructor.
-     * @param PaginatorInterface $paginator
      * @param ManagerRegistry $registry
      */
-    public function __construct(PaginatorInterface $paginator, ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->paginator = $paginator;
         parent::__construct($registry, Period::class);
-    }
-
-    /**
-     * @param $page
-     * @param $limit
-     * @return PaginationInterface
-     */
-    public function paginate($page, $limit)
-    {
-        $qb = $this->createQueryBuilder('p');
-        $qb->addOrderBy('p.position', 'ASC')
-            ->addOrderBy('p.label', 'ASC');
-
-        return $this->paginator->paginate($qb, $page, $limit);
     }
 
     /**

@@ -47,16 +47,6 @@ class EstablishmentManager extends AbstractManager
     }
 
     /**
-     * @param $page
-     * @param $limit
-     * @return PaginationInterface
-     */
-    public function paginate($page, $limit)
-    {
-        return $this->establishmentRepository->paginate($page, $limit);
-    }
-
-    /**
      * @param Establishment $establishment
      */
     public function enable(Establishment $establishment)

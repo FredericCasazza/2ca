@@ -59,7 +59,7 @@ class Meal
     private $establishments;
 
     /**
-     * @ORM\OneToMany(targetEntity="Dish", mappedBy="meal")
+     * @ORM\OneToMany(targetEntity="Dish", mappedBy="meal", cascade={"persist"})
      */
     private $dishes;
 
@@ -330,5 +330,18 @@ class Meal
     public function __toString()
     {
         return strftime('%A %d %B %Y', $this->getDate()->getTimestamp()).' '.$this->getPeriod()->getLabel();
+    }
+
+    /**
+     *
+     */
+    public function __clone()
+    {
+        $dishes = $this->getDishes();
+        $this->dishes = new ArrayCollection();
+        foreach ($dishes as $dish)
+        {
+            $this->addDish(clone  $dish);
+        }
     }
 }

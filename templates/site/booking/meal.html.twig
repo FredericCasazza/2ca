@@ -18,8 +18,9 @@
             </div>
         </div>
         <div class="container">
-            <div class="callout callout-info text-info">
-                <strong>Composez votre menu en sélectionnant les plats souhaités</strong>
+            <div class="callout callout-info text-info d-flex align-items-center">
+                <i class="fas fa-info-circle fa-2x mr-2"></i>
+                <strong>Composez votre menu en sélectionnant les plats souhaités.</strong>
             </div>
             {% for dishCategory in dishesCategories %}
                 {% if dishesByCategory[dishCategory.id] is not empty %}

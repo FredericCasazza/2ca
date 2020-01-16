@@ -31,7 +31,7 @@ class CanAddThisDishToOrderSpecification extends Specification
     public function isSatisfiedBy($dish): bool
     {
         $category = $dish->getCategory();
-        $limit = $category->getLimit();
+        $limit = $category->getDishLimit();
         $dishes = array_filter($this->order->getDishes()->toArray(), function (Dish $d) use ($category){
             return $d->getCategory() === $category;
         });
