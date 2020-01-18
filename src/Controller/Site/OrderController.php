@@ -6,6 +6,7 @@ namespace App\Controller\Site;
 
 use App\Entity\Dish;
 use App\Entity\Order;
+use App\Form\OrderRemoveType;
 use App\Form\ValidateType;
 use App\Helper\OrderHelper;
 use App\Manager\DishCategoryManager;
@@ -132,6 +133,60 @@ class OrderController extends AbstractController
             'status' => true,
             'content' => $render,
         ]);
+    }
+
+    /**
+     * @Route("/order/{id}/ajax_remove", name="order_ajax_remove")
+     * @param $id
+     * @param Request $request
+     * @param OrderManager $orderManager
+     * @param OrderHelper $orderHelper
+     * @return Response
+     */
+    public function ajaxRemove($id, Request $request, OrderManager $orderManager, OrderHelper $orderHelper)
+    {
+        $order = $orderManager->find($id);
+
+        if(!$order instanceof Order)
+        {
+            return $this->json([
+                'status' => false,
+                'content' => "La commande {$id} n'existe pas."
+            ]);
+        }
+
+        if(!$orderHelper->isAuthorizedUser($order))
+        {
+            return $this->json([
+                'status' => false,
+                'content' => "Vous n'êtes pas autorisé à valider la commande {$id}."
+            ]);
+        }
+
+        $form = $this->createForm(OrderRemoveType::class, $order);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            /** @var Dish $dish */
+            $order = $form->getData();
+            $orderManager->remove($order);
+
+            return $this->json([
+                'status' => true,
+                'content' => null,
+            ]);
+        }
+
+        $render = $this->get('twig')->render('site/order/remove.html.twig', [
+            'form' => $form->createView()
+        ]);
+
+        return $this->json([
+            'status' => true,
+            'content' => $render,
+        ]);
+
     }
 
 }

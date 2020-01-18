@@ -39,6 +39,17 @@ class DishRepository extends ServiceEntityRepository
     /**
      * @param Dish $dish
      * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function update(Dish $dish)
+    {
+        $this->_em->persist($dish);
+        $this->_em->flush();
+    }
+
+    /**
+     * @param Dish $dish
+     * @throws ORMException
      */
     public function remove(Dish $dish)
     {

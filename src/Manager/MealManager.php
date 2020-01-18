@@ -89,7 +89,8 @@ class MealManager extends AbstractManager
         $bookDateLimit = $date->modify("-{$meal->getPeriod()->getBookTimeLimit()} hour");
         $meal->setBookDateLimit($bookDateLimit)
             ->setCreationDate($currentDate)
-            ->setModificationDate($currentDate);
+            ->setModificationDate($currentDate)
+            ->setPublished(false);
 
         $event = new CreateMealEvent($meal);
         $this->eventDispatcher->dispatch($event);

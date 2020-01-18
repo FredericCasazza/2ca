@@ -59,7 +59,7 @@ class Meal
     private $establishments;
 
     /**
-     * @ORM\OneToMany(targetEntity="Dish", mappedBy="meal", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Dish", mappedBy="meal", cascade={"persist"}, orphanRemoval=true)
      */
     private $dishes;
 
