@@ -75,9 +75,16 @@
                                             data-action-title="Dupliquer le menu du {{ meal.date|localdate('long') }} ({{ meal.period.label }})"
                                             data-action-url="{{ path('admin_meal_ajax_duplicate', {'id': meal.id}) }}"
                                     >
+                                        <i class="fas fa-copy"></i>
                                         Dupliquer
                                     </button>
-                                    {#<a class="dropdown-item" href="#">Supprimer</a>#}
+                                    <button class="dropdown-item modal-action"
+                                            data-action-title="Supprimer le menu du {{ meal.date|localdate('long') }} ({{ meal.period.label }})"
+                                            data-action-url="{{ path('admin_meal_ajax_remove', {'id': meal.id}) }}"
+                                    >
+                                        <i class="fas fa-trash-alt"></i>
+                                        Supprimer
+                                    </button>
                                 </div>
                             </div>
                         </td>

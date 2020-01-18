@@ -7,6 +7,7 @@ use App\Entity\Establishment;
 use App\Entity\Meal;
 use App\Event\Meal\CreateMealEvent;
 use App\Event\Meal\PublishMealEvent;
+use App\Event\Meal\RemoveMealEvent;
 use App\Event\Meal\UpdateMealEvent;
 use App\Repository\MealRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -104,6 +105,15 @@ class MealManager extends AbstractManager
     {
         $meal->setModificationDate(new \DateTime());
         $event = new UpdateMealEvent($meal);
+        $this->eventDispatcher->dispatch($event);
+    }
+
+    /**
+     * @param Meal $meal
+     */
+    public function remove(Meal $meal)
+    {
+        $event = new RemoveMealEvent($meal);
         $this->eventDispatcher->dispatch($event);
     }
 }

@@ -8,6 +8,7 @@ use App\Event\Dish\CreateDishEvent;
 use App\Event\Dish\RemoveDishEvent;
 use App\Event\Meal\CreateMealEvent;
 use App\Event\Meal\PublishMealEvent;
+use App\Event\Meal\RemoveMealEvent;
 use App\Event\Meal\UnpublishMealEvent;
 use App\Event\Meal\UpdateMealEvent;
 use App\Manager\MealManager;
@@ -55,6 +56,9 @@ class MealSubscriber implements EventSubscriberInterface
             UpdateMealEvent::class => [
                 ['update', 20]
             ],
+            RemoveMealEvent::class => [
+                ['remove', 20]
+            ],
             PublishMealEvent::class => [
                 ['publish', 20]
             ],
@@ -90,6 +94,12 @@ class MealSubscriber implements EventSubscriberInterface
     {
         $meal = $event->getMeal();
         $this->mealRepository->update($meal);
+    }
+
+    public function remove(RemoveMealEvent $event)
+    {
+        $meal = $event->getMeal();
+        $this->mealRepository->remove($meal);
     }
 
     /**

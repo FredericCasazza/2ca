@@ -301,6 +301,10 @@ class Meal
         return $this->orders;
     }
 
+    /**
+     * @param Order $order
+     * @return $this
+     */
     public function addOrder(Order $order): self
     {
         if (!$this->orders->contains($order)) {
@@ -311,6 +315,10 @@ class Meal
         return $this;
     }
 
+    /**
+     * @param Order $order
+     * @return $this
+     */
     public function removeOrder(Order $order): self
     {
         if ($this->orders->contains($order)) {
