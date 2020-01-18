@@ -151,10 +151,11 @@ class MealController extends AbstractController
      * @Route("/admin/meal/ajax_create", name="admin_meal_ajax_create")
      * @param Request $request
      * @param MealManager $mealManager
+     * @param DishCategoryManager $dishCategoryManager
      * @return Response
      * @throws \Exception
      */
-    public function ajaxCreate(Request $request, MealManager $mealManager)
+    public function ajaxCreate(Request $request, MealManager $mealManager, DishCategoryManager $dishCategoryManager)
     {
         $meal = new Meal();
         $form = $this->createForm(MealType::class, $meal);
@@ -163,6 +164,19 @@ class MealController extends AbstractController
         if($form->isSubmitted() && $form->isValid())
         {
             $meal = $form->getData();
+
+            $dishCategories = $dishCategoryManager->findEnableOrderedByPosition();
+            foreach ($dishCategories as $dishCategory)
+            {
+                foreach ($dishCategory->getDishes() as $label)
+                {
+                    $dish = new Dish();
+                    $dish->setLabel($label)
+                        ->setCategory($dishCategory);
+                    $meal->addDish($dish);
+                }
+            }
+
             $mealManager->create($meal);
 
             return $this->json([
