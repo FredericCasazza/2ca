@@ -8,6 +8,7 @@ use App\Entity\Dish;
 use App\Entity\User;
 use App\Form\DishRemoveType;
 use App\Form\Filter\UserFilterType;
+use App\Form\UserRemoveType;
 use App\Form\UserType;
 use App\Manager\DishManager;
 use App\Manager\UserManager;
@@ -97,6 +98,49 @@ class UserController extends AbstractController
 
         return $this->render('admin/administration/user/edit.html.twig', [
             'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/admin/user/{id}/ajax_remove", name="admin_user_ajax_remove")
+     * @param $id
+     * @param Request $request
+     * @param UserManager $userManager
+     * @return Response
+     */
+    public function ajaxRemove($id, Request $request, UserManager $userManager)
+    {
+        $user = $userManager->find($id);
+
+        if(!$user instanceof User)
+        {
+            return $this->json([
+                'status' => false,
+                'content' => "L'utilisateur {$id} n'existe pas"
+            ]);
+        }
+
+        $form = $this->createForm(UserRemoveType::class, $user);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $user = $form->getData();
+            $userManager->remove($user);
+
+            return $this->json([
+                'status' => true,
+                'content' => null,
+            ]);
+        }
+
+        $render = $this->get('twig')->render('admin/administration/user/remove.html.twig', [
+            'form' => $form->createView()
+        ]);
+
+        return $this->json([
+            'status' => true,
+            'content' => $render,
         ]);
     }
 }

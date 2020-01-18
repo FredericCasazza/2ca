@@ -7,6 +7,7 @@ use App\Constant\Role;
 use App\Entity\User;
 use App\Event\User\CreateLostPasswordTokenUserEvent;
 use App\Event\User\CreateUserEvent;
+use App\Event\User\RemoveUserEvent;
 use App\Event\User\UpdateUserEvent;
 use App\Repository\UserRepository;
 use Knp\Component\Pager\Pagination\PaginationInterface;
@@ -122,6 +123,16 @@ class UserManager extends AbstractManager
 
         $event = new UpdateUserEvent($user);
         $this->eventDispatcher->dispatch($event);
+    }
+
+    /**
+     * @param User $user
+     */
+    public function remove(User $user)
+    {
+        $event = new RemoveUserEvent($user);
+        $this->eventDispatcher->dispatch($event);
+
     }
 
     /**

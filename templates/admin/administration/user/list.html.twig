@@ -59,16 +59,20 @@
                             {{ roles|trim(', ', 'right') }}
                         </td>
                         <td class="text-right">
-                            {#
                             <div class="dropdown dropdown-actions">
-                                <button class="btn btn-link dropdown-toggle" type="button" id="meal_{{ meal.id }}_actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button class="btn btn-link dropdown-toggle" type="button" id="user_{{ user.id }}_actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-ellipsis-v"></i>
                                 </button>
-                                <div class="dropdown-menu" aria-labelledby="meal_{{ meal.id }}_actions">
-                                    <a class="dropdown-item" href="#">Supprimer</a>
+                                <div class="dropdown-menu" aria-labelledby="user_{{ user.id }}_actions">
+                                    <button class="dropdown-item modal-action"
+                                            data-action-title="Supprimer l'utilisateur {{ user.firstname }} ({{ user.lastname }})"
+                                            data-action-url="{{ path('admin_user_ajax_remove', {'id': user.id}) }}"
+                                    >
+                                        <i class="fas fa-trash-alt"></i>
+                                        Supprimer
+                                    </button>
                                 </div>
                             </div>
-                            #}
                         </td>
                     </tr>
                 {% endfor %}
