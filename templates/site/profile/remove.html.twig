@@ -1,6 +1,7 @@
-<div class="callout callout-danger d-flex align-items-center">
-    <i class="fas fa-wrench fa-2x text-danger mr-2"></i>
-    <h6>
-        Nous sommes désolé, cette fonctionnalité est en cours de développement.
-    </h6>
-</div>
+{{ form_start(form, {'attr': {'class': 'modal-action-form', 'data-action-url': path('profile_ajax_remove', {'id': form.vars.data.id}) }}) }}
+    <h5>Attention vous êtes sur le point de supprimer votre compte</h5>
+    {{ form_row(form.plainTextPassword) }}
+    <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-block btn-danger mr-2">Supprimer</button>
+    </div>
+{{ form_end(form) }}
