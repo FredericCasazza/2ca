@@ -1,15 +1,7 @@
 {{ form_start(form, {'attr': {'class': 'modal-action-form', 'data-action-url': path('admin_meal_ajax_edit', {'id': form.vars.data.id}) }}) }}
     {{ form_row(form.date) }}
     {{ form_row(form.period) }}
-    <div class="form-group">
-        {{ form_label(form.bookDateLimit) }}
-        <div class="input-group date" id="bookDateLimitDatetimepicker" data-target-input="nearest">
-            {{ form_widget(form.bookDateLimit) }}
-            <div class="input-group-append" data-target="#bookDateLimitDatetimepicker" data-toggle="datetimepicker">
-                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-            </div>
-        </div>
-    </div>
+    {{ form_row(form.bookDateLimit) }}
     <div class="card">
         <div class="card-body">
             <h6><u>Sélectionnez les établissements concernés</u></h6>
@@ -20,7 +12,9 @@
 {{ form_end(form) }}
 
 <script>
+    /*
     $('#bookDateLimitDatetimepicker').datetimepicker({
         locale: 'fr'
     });
+     */
 </script>

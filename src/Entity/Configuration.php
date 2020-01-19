@@ -29,6 +29,12 @@ class Configuration
     private $sessionMaxIdleTime = 0;
 
     /**
+     * @var int
+     * @ORM\Column(type="integer", nullable=false)
+     */
+    private $ordersRetentionDays;
+
+    /**
      * @var boolean
      * @ORM\Column(type="boolean")
      */
@@ -141,6 +147,24 @@ class Configuration
     public function setSessionMaxIdleTime(int $sessionMaxIdleTime): self
     {
         $this->sessionMaxIdleTime = $sessionMaxIdleTime;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOrdersRetentionDays(): int
+    {
+        return $this->ordersRetentionDays;
+    }
+
+    /**
+     * @param int $ordersRetentionDays
+     * @return Configuration
+     */
+    public function setOrdersRetentionDays(int $ordersRetentionDays): Configuration
+    {
+        $this->ordersRetentionDays = $ordersRetentionDays;
         return $this;
     }
 

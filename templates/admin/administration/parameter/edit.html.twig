@@ -13,18 +13,36 @@
 
     <div class="container-fluid pt-2">
 
-        <!-- Session -->
-        <div class="card">
+        <!-- Général -->
+        <div class="card card-collapse">
             <h5 class="card-header">
-                <a data-toggle="collapse" href="#collapse-session" aria-expanded="true" aria-controls="collapse-example" id="heading-session" class="d-block">
-                    <i class="fa fa-chevron-down pull-right"></i>
-                    Session
+                <a data-toggle="collapse" href="#collapse-general" aria-expanded="true" aria-controls="collapse-general" id="heading-general" class="d-block">
+                    <i class="fa fa-chevron-down"></i>
+                    Général
                 </a>
             </h5>
-            <div id="collapse-session" class="collapse show" aria-labelledby="heading-session">
+            <div id="collapse-general" class="collapse show" aria-labelledby="heading-general">
                 <div class="card-body">
                     <div class="form-group row">
-                        {{ form_label(form.sessionMaxIdleTime, null, {'label_attr': {'class': 'col-sm-2 col-form-label'}}) }}
+                        <div class="col-sm-2">
+                            <label for="parameter_ordersRetentionDays" class="required">
+                                Temps de conservation des commandes
+                                <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="auto"
+                                   title="Temps exprimé en jour après que la date pour laquelle la réservation a été faite soit passée (0 = conservation illimitée)"
+                                ></i>
+                            </label>
+                        </div>
+                        <div class="col-sm-10">
+                            {{ form_widget(form.ordersRetentionDays) }}
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label required" for="parameter_sessionMaxIdleTime">
+                            Déconnexion après temps d'inactivité
+                            <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="auto"
+                               title="Temps exprimé en secondes (0 = pas de déconnexion)"
+                            ></i>
+                        </label>
                         <div class="col-sm-10">
                             {{ form_widget(form.sessionMaxIdleTime) }}
                         </div>
@@ -34,9 +52,9 @@
         </div>
 
         <!-- Mailer -->
-        <div class="card">
+        <div class="card card-collapse">
             <h5 class="card-header">
-                <a data-toggle="collapse" href="#collapse-mail" aria-expanded="true" aria-controls="collapse-example" id="heading-mail" class="d-block">
+                <a data-toggle="collapse" href="#collapse-mail" aria-expanded="true" aria-controls="collapse-mailer" id="heading-mail" class="d-block">
                     <i class="fa fa-chevron-down pull-right"></i>
                     Mail
                 </a>
@@ -102,9 +120,9 @@
         </div>
 
         <!-- Recaptcha -->
-        <div class="card">
+        <div class="card card-collapse">
             <h5 class="card-header">
-                <a data-toggle="collapse" href="#collapse-recaptcha" aria-expanded="true" aria-controls="collapse-example" id="heading-recaptcha" class="d-block">
+                <a data-toggle="collapse" href="#collapse-recaptcha" aria-expanded="true" aria-controls="collapse-recaptcha" id="heading-recaptcha" class="d-block">
                     <i class="fa fa-chevron-down pull-right"></i>
                     Recaptcha
                 </a>
