@@ -6,6 +6,7 @@ namespace App\Subscriber;
 
 use App\Event\User\CreateLostPasswordTokenUserEvent;
 use App\Event\User\CreateUserEvent;
+use App\Event\User\RemoveUserEvent;
 use App\Event\User\UpdateUserEvent;
 use App\Repository\UserRepository;
 use Doctrine\ORM\OptimisticLockException;
@@ -44,6 +45,9 @@ class UserSubscriber implements EventSubscriberInterface
             UpdateUserEvent::class => [
                 ['update', 20]
             ],
+            RemoveUserEvent::class => [
+                ['remove', 20]
+            ],
             CreateLostPasswordTokenUserEvent::class => [
                 ['createLostPasswordToken', 20]
             ]
@@ -70,6 +74,17 @@ class UserSubscriber implements EventSubscriberInterface
     {
         $user = $event->getUser();
         $this->userRepository->update($user);
+    }
+
+    /**
+     * @param RemoveUserEvent $event
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function remove(RemoveUserEvent $event)
+    {
+        $user = $event->getUser();
+        $this->userRepository->remove($user);
     }
 
     /**

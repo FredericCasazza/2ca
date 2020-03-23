@@ -29,6 +29,8 @@ class ParameterType extends AbstractType
     {
         $builder->add('sessionMaxIdleTime', IntegerType::class, [
             'label' => "Déconnexion après temps d'inactivité en secondes",
+        ])->add('ordersRetentionDays', IntegerType::class, [
+            'label' => "Temps de conservation des commandes",
         ])->add('mailerHost', TextType::class, [
             'required' => false,
             'label' => 'Host'

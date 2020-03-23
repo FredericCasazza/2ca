@@ -88,4 +88,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
+    /**
+     * @param User $user
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function remove(User $user)
+    {
+        $this->_em->remove($user);
+        $this->_em->flush();
+    }
+
 }

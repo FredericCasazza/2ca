@@ -169,15 +169,13 @@ class BookingController extends AbstractController
     {
         $meal = $mealManager->find($id);
 
-        if(!$meal instanceof Meal)
-        {
+        if (!$meal instanceof Meal) {
             $this->addFlash('danger', "Le menu {$id} n'existe pas");
             return $this->redirectToRoute('booking');
         }
 
         $isBookableMealSpecification = new IsBookableMealSpecification();
-        if(!$isBookableMealSpecification->isSatisfiedBy($meal))
-        {
+        if (!$isBookableMealSpecification->isSatisfiedBy($meal)) {
             $this->addFlash('danger', "Vous ne pouvez pas faire de réservation sur ce menu.");
             return $this->redirectToRoute('booking');
         }
@@ -185,7 +183,7 @@ class BookingController extends AbstractController
         $dishesCategories = $dishCategoryManager->findEnableOrderedByPosition();
 
         $dishesByCategory = [];
-        foreach ($dishesCategories as $dishCategory){
+        foreach ($dishesCategories as $dishCategory) {
             $dishes = $dishManager->findByMealAndDishCategory($meal, $dishCategory);
             $dishesByCategory[$dishCategory->getId()] = $dishes;
         }
@@ -193,8 +191,10 @@ class BookingController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
+
         $order = $orderManager->findOneByUserAndMeal($user, $meal);
 
+        /*
         if(!$order instanceof Order)
         {
             $order = new Order();
@@ -203,17 +203,19 @@ class BookingController extends AbstractController
                 ->setMeal($meal);
             $orderManager->create($order);
         }
+        */
 
-        if(!$orderHelper->isAuthorizedUser($order))
+        if ($order instanceof Order)
         {
-            throw $this->createAccessDeniedException();
-        }
+            if (!$orderHelper->isAuthorizedUser($order)) {
+                throw $this->createAccessDeniedException();
+            }
 
-        if($orderHelper->isValidate($order))
-        {
-            return $this->redirectToRoute('order_view', [
-                'id' => $order->getId()
-            ]);
+            if ($orderHelper->isValidate($order)) {
+                return $this->redirectToRoute('order_view', [
+                    'id' => $order->getId()
+                ]);
+            }
         }
 
         return $this->render('site/booking/meal.html.twig', [
@@ -263,10 +265,17 @@ class BookingController extends AbstractController
 
         if(!$order instanceof Order)
         {
+            $order = new Order();
+            $order->setUser($user)
+                ->setEstablishment($user->getEstablishment())
+                ->setMeal($meal);
+            $orderManager->create($order);
+            /*
             return $this->json([
                 'status' => false,
                 'content' => "Il n'y a pas de réservation vous concernant à cette date."
             ]);
+            */
         }
 
         if(!$orderHelper->isAuthorizedUser($order))
@@ -336,7 +345,7 @@ class BookingController extends AbstractController
         {
             return $this->json([
                 'status' => false,
-                'content' => "Il n'y a pas de réservation vous concernant à cette dat."
+                'content' => "Il n'y a pas de réservation vous concernant à cette date."
             ]);
         }
 
@@ -355,6 +364,49 @@ class BookingController extends AbstractController
         return $this->json([
             'status' => true,
             'content' => null,
+        ]);
+    }
+
+    /**
+     * @Route("/booking/meal/{id}/summary", name="booking_meal_summary")
+     * @param $id
+     * @param MealManager $mealManager
+     * @param OrderManager $orderManager
+     * @param OrderHelper $orderHelper
+     * @return RedirectResponse
+     */
+    public function summary($id, MealManager $mealManager, OrderManager $orderManager, OrderHelper $orderHelper)
+    {
+        $meal = $mealManager->find($id);
+
+        if (!$meal instanceof Meal) {
+            $this->addFlash('danger', "Le menu {$id} n'existe pas");
+            return $this->redirectToRoute('booking');
+        }
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $order = $orderManager->findOneByUserAndMeal($user, $meal);
+
+        if(!$order instanceof Order)
+        {
+            $this->addFlash('danger', "Vous n'avez pas de réservation pour cette date");
+            return $this->redirectToRoute('booking_meal', [
+                'id' => $id
+            ]);
+        }
+
+        if(!$orderHelper->isAuthorizedUser($order))
+        {
+            $this->addFlash('danger', "Vous n'êtes pas autorisé à consulter cette commande");
+            return $this->redirectToRoute('booking_meal', [
+                'id' => $id
+            ]);
+        }
+
+        return $this->redirectToRoute('order_view', [
+            'id' => $order->getId()
         ]);
     }
 

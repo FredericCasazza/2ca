@@ -9,6 +9,7 @@ use App\Entity\Meal;
 use App\Form\DishType;
 use App\Form\Filter\MealFilterType;
 use App\Form\MealEditType;
+use App\Form\MealRemoveType;
 use App\Form\MealType;
 use App\Manager\DishCategoryManager;
 use App\Manager\DishManager;
@@ -151,10 +152,11 @@ class MealController extends AbstractController
      * @Route("/admin/meal/ajax_create", name="admin_meal_ajax_create")
      * @param Request $request
      * @param MealManager $mealManager
+     * @param DishCategoryManager $dishCategoryManager
      * @return Response
      * @throws \Exception
      */
-    public function ajaxCreate(Request $request, MealManager $mealManager)
+    public function ajaxCreate(Request $request, MealManager $mealManager, DishCategoryManager $dishCategoryManager)
     {
         $meal = new Meal();
         $form = $this->createForm(MealType::class, $meal);
@@ -163,6 +165,19 @@ class MealController extends AbstractController
         if($form->isSubmitted() && $form->isValid())
         {
             $meal = $form->getData();
+
+            $dishCategories = $dishCategoryManager->findEnableOrderedByPosition();
+            foreach ($dishCategories as $dishCategory)
+            {
+                foreach ($dishCategory->getDishes() as $label)
+                {
+                    $dish = new Dish();
+                    $dish->setLabel($label)
+                        ->setCategory($dishCategory);
+                    $meal->addDish($dish);
+                }
+            }
+
             $mealManager->create($meal);
 
             return $this->json([
@@ -314,6 +329,50 @@ class MealController extends AbstractController
             'content' => $render,
         ]);
 
+    }
+
+    /**
+     * @Route("/admin/meal/{id}/ajax_remove", name="admin_meal_ajax_remove")
+     * @param $id
+     * @param Request $request
+     * @param MealManager $mealManager
+     * @return Response
+     * @throws \Exception
+     */
+    public function ajaxRemove($id, Request $request, MealManager $mealManager)
+    {
+        $meal = $mealManager->find($id);
+
+        if(!$meal instanceof Meal)
+        {
+            return $this->json([
+                'status' => false,
+                'content' => "Le menu {$id} n'existe pas"
+            ]);
+        }
+
+        $form = $this->createForm(MealRemoveType::class, $meal);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $meal = $form->getData();
+            $mealManager->remove($meal);
+
+            return $this->json([
+                'status' => true,
+                'content' => null,
+            ]);
+        }
+
+        $render = $this->get('twig')->render('admin/catalog/meal/remove.html.twig', [
+            'form' => $form->createView()
+        ]);
+
+        return $this->json([
+            'status' => true,
+            'content' => $render,
+        ]);
     }
 
 }

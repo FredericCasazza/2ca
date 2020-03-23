@@ -1,0 +1,6 @@
+{{ form_start(form, {'attr': {'class': 'modal-action-form', 'data-action-url': path('admin_user_ajax_remove', {'id': form.vars.data.id}) }}) }}
+    <h5>Êtes-vous sûr(e) de vouloir supprimer cet utilisateur et toutes ses informations (infos de compte, commandes, ...) ?</h5>
+    <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-danger mr-2">Supprimer</button>
+    </div>
+{{ form_end(form) }}

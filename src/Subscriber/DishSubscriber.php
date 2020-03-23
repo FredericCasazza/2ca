@@ -6,6 +6,7 @@ namespace App\Subscriber;
 
 use App\Event\Dish\CreateDishEvent;
 use App\Event\Dish\RemoveDishEvent;
+use App\Event\Dish\UpdateDishEvent;
 use App\Repository\DishRepository;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
@@ -40,6 +41,9 @@ class DishSubscriber implements EventSubscriberInterface
             CreateDishEvent::class => [
                 ['create', 20]
             ],
+            UpdateDishEvent::class => [
+                ['update', 20]
+            ],
             RemoveDishEvent::class => [
                 ['remove', 20]
             ],
@@ -55,6 +59,17 @@ class DishSubscriber implements EventSubscriberInterface
     {
         $dish = $event->getDish();
         $this->dishRepository->create($dish);
+    }
+
+    /**
+     * @param UpdateDishEvent $event
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function update(UpdateDishEvent $event)
+    {
+        $dish = $event->getDish();
+        $this->dishRepository->update($dish);
     }
 
     /**

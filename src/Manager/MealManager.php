@@ -3,14 +3,13 @@
 
 namespace App\Manager;
 
-use App\Entity\Dish;
 use App\Entity\Establishment;
 use App\Entity\Meal;
 use App\Event\Meal\CreateMealEvent;
 use App\Event\Meal\PublishMealEvent;
+use App\Event\Meal\RemoveMealEvent;
 use App\Event\Meal\UpdateMealEvent;
 use App\Repository\MealRepository;
-use Knp\Component\Pager\Pagination\PaginationInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -25,24 +24,16 @@ class MealManager extends AbstractManager
     private $mealRepository;
 
     /**
-     * @var DishCategoryManager
-     */
-    private $dishCategoryManager;
-
-    /**
      * MealManager constructor.
      * @param EventDispatcherInterface $eventDispatcher
      * @param MealRepository $mealRepository
-     * @param DishCategoryManager $dishCategoryManager
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
-        MealRepository $mealRepository,
-        DishCategoryManager $dishCategoryManager
+        MealRepository $mealRepository
     )
     {
         $this->mealRepository = $mealRepository;
-        $this->dishCategoryManager = $dishCategoryManager;
         parent::__construct($eventDispatcher);
     }
 
@@ -99,19 +90,8 @@ class MealManager extends AbstractManager
         $bookDateLimit = $date->modify("-{$meal->getPeriod()->getBookTimeLimit()} hour");
         $meal->setBookDateLimit($bookDateLimit)
             ->setCreationDate($currentDate)
-            ->setModificationDate($currentDate);
-
-        $dishCategories = $this->dishCategoryManager->findEnableOrderedByPosition();
-        foreach ($dishCategories as $dishCategory)
-        {
-            foreach ($dishCategory->getDishes() as $label)
-            {
-                $dish = new Dish();
-                $dish->setLabel($label)
-                    ->setCategory($dishCategory);
-                $meal->addDish($dish);
-            }
-        }
+            ->setModificationDate($currentDate)
+            ->setPublished(false);
 
         $event = new CreateMealEvent($meal);
         $this->eventDispatcher->dispatch($event);
@@ -125,6 +105,15 @@ class MealManager extends AbstractManager
     {
         $meal->setModificationDate(new \DateTime());
         $event = new UpdateMealEvent($meal);
+        $this->eventDispatcher->dispatch($event);
+    }
+
+    /**
+     * @param Meal $meal
+     */
+    public function remove(Meal $meal)
+    {
+        $event = new RemoveMealEvent($meal);
         $this->eventDispatcher->dispatch($event);
     }
 }

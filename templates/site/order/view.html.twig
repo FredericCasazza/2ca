@@ -27,6 +27,12 @@
                             Valider la commande
                         </button>
                     {% endif %}
+                    <button class="modal-action btn btn-danger"
+                            data-action-title="Supprimer la commande"
+                            data-action-url="{{ path('order_ajax_remove', {'id': order.id}) }}"
+                    >
+                        Supprimer la commande
+                    </button>
                 </div>
             </div>
         </div>

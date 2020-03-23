@@ -59,7 +59,7 @@ class Meal
     private $establishments;
 
     /**
-     * @ORM\OneToMany(targetEntity="Dish", mappedBy="meal", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Dish", mappedBy="meal", cascade={"persist"}, orphanRemoval=true)
      */
     private $dishes;
 
@@ -301,6 +301,10 @@ class Meal
         return $this->orders;
     }
 
+    /**
+     * @param Order $order
+     * @return $this
+     */
     public function addOrder(Order $order): self
     {
         if (!$this->orders->contains($order)) {
@@ -311,6 +315,10 @@ class Meal
         return $this;
     }
 
+    /**
+     * @param Order $order
+     * @return $this
+     */
     public function removeOrder(Order $order): self
     {
         if ($this->orders->contains($order)) {

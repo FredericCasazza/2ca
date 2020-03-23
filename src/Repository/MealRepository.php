@@ -71,4 +71,15 @@ class MealRepository extends ServiceEntityRepository
         $this->_em->persist($meal);
         $this->_em->flush();
     }
+
+    /**
+     * @param Meal $meal
+     * @throws ORMException
+     * @throws OptimisticLockException
+     */
+    public function remove(Meal $meal)
+    {
+        $this->_em->remove($meal);
+        $this->_em->flush();
+    }
 }

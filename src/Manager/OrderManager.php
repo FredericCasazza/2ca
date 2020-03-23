@@ -51,6 +51,14 @@ class OrderManager extends AbstractManager
     }
 
     /**
+     * @return Order[]
+     */
+    public function findAll()
+    {
+        return $this->orderRepository->findAll();
+    }
+
+    /**
      * @param User $user
      * @param Meal $meal
      * @return Order|null
@@ -71,6 +79,7 @@ class OrderManager extends AbstractManager
     {
         return $this->orderRepository->findValidByDatePeriodAndEstablishment($date, $period, $establishment);
     }
+
 
     /**
      * @param Order $order

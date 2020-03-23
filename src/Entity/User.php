@@ -90,6 +90,19 @@ class User implements UserInterface
     private $establishment;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Order", mappedBy="user", orphanRemoval=true)
+     */
+    private $orders;
+
+    /**
+     * User constructor.
+     */
+    public function __construct()
+    {
+        $this->orders = new ArrayCollection();
+    }
+
+    /**
      * @return int|null
      */
     public function getId(): ?int
@@ -315,5 +328,43 @@ class User implements UserInterface
     public function getUsername()
     {
         return $this->email;
+    }
+
+    /**
+     * @return Collection|Order[]
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    /**
+     * @param Order $order
+     * @return $this
+     */
+    public function addOrder(Order $order): self
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders[] = $order;
+            $order->setUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Order $order
+     * @return $this
+     */
+    public function removeOrder(Order $order): self
+    {
+        if ($this->orders->contains($order)) {
+            $this->orders->removeElement($order);
+            if ($order->getUser() === $this) {
+                $order->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

@@ -1,0 +1,18 @@
+{{ form_start(form, {'attr': {'class': 'modal-action-form', 'data-action-url': path('admin_meal_ajax_remove', {'id': form.vars.data.id}) }}) }}
+    <h5>Êtes-vous sûr(e) de vouloir supprimer ce menu ?</h5>
+    <ul class="text-danger">
+        {% if form.vars.data.dishes.count > 0 %}
+            <li>
+                Nombre de plats également supprimés : {{ form.vars.data.dishes.count }}
+            </li>
+        {% endif %}
+        {% if form.vars.data.orders.count > 0 %}
+            <li>
+                Nombre de commandes également supprimées : {{ form.vars.data.orders.count }}
+            </li>
+        {% endif %}
+    </ul>
+    <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-danger mr-2">Supprimer</button>
+    </div>
+{{ form_end(form) }}
