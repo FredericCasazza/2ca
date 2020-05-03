@@ -9,76 +9,86 @@
     <div class="sidebar">
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-tachometer-alt"></i>
-                        <p>Tableau de bord</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ path('admin_orders') }}" class="nav-link {% if 'orders' in menusActive %} active {% endif %}">
-                        <i class="fas fa-shopping-basket"></i>
-                        <p>Commandes</p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ path('admin_meals') }}" class="nav-link {% if 'meals' in menusActive %} active {% endif %}">
-                        <i class="fas fa-clipboard-list"></i>
-                        <p>Menus</p>
-                    </a>
-                </li>
-                <li class="nav-item has-treeview {% if 'catalog' in menusActive %} menu-open {% endif %}">
-                    <a href="#" class="nav-link {% if 'catalog' in menusActive %} active {% endif %}">
-                        <i class="fas fa-book"></i>
-                        <p>
-                            Référentiel
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ path('admin_periods') }}" class="nav-link {% if 'periods' in menusActive %} active {% endif %}">
-                                <i class="fas fa-clock nav-icon"></i>
-                                <p>Repas</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ path('admin_dish_categories') }}" class="nav-link {% if 'dish_categories' in menusActive %} active {% endif %}">
-                                <i class="fas fa-utensils nav-icon"></i>
-                                <p>Catégories de plats</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ path('admin_establishments') }}" class="nav-link {% if 'establishments' in menusActive %} active {% endif %}">
-                                <i class="fas fa-map-marked-alt nav-icon"></i>
-                                <p>Etablissements</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-                <li class="nav-item has-treeview {% if 'administration' in menusActive %} menu-open {% endif %}">
-                    <a href="#" class="nav-link {% if 'administration' in menusActive %} active {% endif %}">
-                        <i class="fas fa-cog"></i>
-                        <p>
-                            Administration
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="{{ path('admin_users') }}" class="nav-link {% if 'users' in menusActive %} active {% endif %}">
-                                <i class="fas fa-user"></i>
-                                <p>Utilisateurs</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ path('admin_parameter_edit') }}" class="nav-link {% if 'parameters' in menusActive %} active {% endif %}">
-                                <i class="fas fa-cogs"></i>
-                                <p>Paramètres avancés</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <p>Tableau de bord</p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if is_granted('ROLE_CHIEF') %}
+                    <li class="nav-item">
+                        <a href="{{ path('admin_orders') }}" class="nav-link {% if 'orders' in menusActive %} active {% endif %}">
+                            <i class="fas fa-shopping-basket"></i>
+                            <p>Commandes</p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item">
+                        <a href="{{ path('admin_meals') }}" class="nav-link {% if 'meals' in menusActive %} active {% endif %}">
+                            <i class="fas fa-clipboard-list"></i>
+                            <p>Menus</p>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item has-treeview {% if 'catalog' in menusActive %} menu-open {% endif %}">
+                        <a href="#" class="nav-link {% if 'catalog' in menusActive %} active {% endif %}">
+                            <i class="fas fa-book"></i>
+                            <p>
+                                Référentiel
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ path('admin_periods') }}" class="nav-link {% if 'periods' in menusActive %} active {% endif %}">
+                                    <i class="fas fa-clock nav-icon"></i>
+                                    <p>Repas</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ path('admin_dish_categories') }}" class="nav-link {% if 'dish_categories' in menusActive %} active {% endif %}">
+                                    <i class="fas fa-utensils nav-icon"></i>
+                                    <p>Catégories de plats</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ path('admin_establishments') }}" class="nav-link {% if 'establishments' in menusActive %} active {% endif %}">
+                                    <i class="fas fa-map-marked-alt nav-icon"></i>
+                                    <p>Etablissements</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="nav-item has-treeview {% if 'administration' in menusActive %} menu-open {% endif %}">
+                        <a href="#" class="nav-link {% if 'administration' in menusActive %} active {% endif %}">
+                            <i class="fas fa-cog"></i>
+                            <p>
+                                Administration
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ path('admin_users') }}" class="nav-link {% if 'users' in menusActive %} active {% endif %}">
+                                    <i class="fas fa-user"></i>
+                                    <p>Utilisateurs</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ path('admin_parameter_edit') }}" class="nav-link {% if 'parameters' in menusActive %} active {% endif %}">
+                                    <i class="fas fa-cogs"></i>
+                                    <p>Paramètres avancés</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                {% endif %}
             </ul>
         </nav>
     </div>
