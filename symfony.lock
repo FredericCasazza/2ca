@@ -90,18 +90,6 @@
     "doctrine/reflection": {
         "version": "v1.0.0"
     },
-    "easycorp/easy-log-handler": {
-        "version": "1.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "1.0",
-            "ref": "70062abc2cd58794d2a90274502f81b55cd9951b"
-        },
-        "files": [
-            "./config/packages/dev/easy_log_handler.yaml"
-        ]
-    },
     "egulias/email-validator": {
         "version": "2.1.14"
     },
@@ -433,7 +421,7 @@
         ]
     },
     "symfony/templating": {
-        "version": "v4.4.2"
+        "version": "v4.4.8"
     },
     "symfony/translation": {
         "version": "3.3",
