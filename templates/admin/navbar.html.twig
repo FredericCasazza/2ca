@@ -11,7 +11,9 @@
         </li>
     </ul>
     <ul class="navbar-nav ml-auto">
-        {% include 'admin/notifications.html.twig' %}
+        {% if is_granted('ROLE_ADMIN') %}
+            {% include 'admin/notifications.html.twig' %}
+        {% endif %}
         <li class="nav-item dropdown">
             <a href="#" class="user-dropdown nav-link dropdown-toggle text-primary" id="user-dropdown-link" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {{ app.user.firstname ~ ' ' ~ app.user.lastname }}

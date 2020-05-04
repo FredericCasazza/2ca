@@ -34,9 +34,16 @@ security:
         - { path: ^/booking/not_customer, roles: ROLE_USER }
         - { path: ^/booking, roles: ROLE_CLIENT }
         - { path: ^/order, roles: ROLE_CLIENT }
+        - { path: ^/admin/order, roles: ROLE_CHIEF }
         - { path: ^/admin, roles: ROLE_ADMIN }
 
     role_hierarchy:
-        ROLE_SUPER_ADMIN: ROLE_ADMIN
-        ROLE_ADMIN: ROLE_CLIENT
-        ROLE_CLIENT: ROLE_USER
+        ROLE_SUPER_ADMIN:
+            - ROLE_ADMIN
+        ROLE_ADMIN:
+            - ROLE_CHIEF
+        ROLE_CHIEF:
+            - ROLE_CLIENT
+            - ROLE_ADMIN_PANEL
+        ROLE_CLIENT:
+            - ROLE_USER
