@@ -118,7 +118,7 @@
         "version": "v5.0.0"
     },
     "lexik/form-filter-bundle": {
-        "version": "v6.0.1"
+        "version": "v6.0.5"
     },
     "monolog/monolog": {
         "version": "1.25.2"
@@ -428,9 +428,6 @@
             "./config/packages/swiftmailer.yaml",
             "./config/packages/test/swiftmailer.yaml"
         ]
-    },
-    "symfony/templating": {
-        "version": "v4.4.8"
     },
     "symfony/translation": {
         "version": "3.3",
