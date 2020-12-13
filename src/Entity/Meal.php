@@ -351,5 +351,7 @@ class Meal
         {
             $this->addDish(clone  $dish);
         }
+
+        $this->setEstablishments(new ArrayCollection($this->establishments->toArray()));
     }
 }
