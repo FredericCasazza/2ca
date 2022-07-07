@@ -22,7 +22,7 @@
         "admin-lte": "^3.0.1",
         "bootbox": "^5.4.0",
         "jquery": "^3.5.0",
-        "moment": "^2.24.0",
+        "moment": "^2.29.4",
         "tempusdominus-bootstrap-4": "https://github.com/tempusdominus/bootstrap-4.git"
     }
 }
